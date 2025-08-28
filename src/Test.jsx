@@ -1,24 +1,13 @@
 import { useState, useEffect } from "react";
 import supabase from "./services/supabase.js";
-import { logOut, loginGoogle } from "./services/apiAuth.js";
+import { useUser } from "./features/authentication/useUser.js";
+import Logout from "./features/authentication/Logout.jsx";
 
 function Test() {
   const [movies, setMovies] = useState([]);
   const [movieIds, setMovieIds] = useState([]);
   const [theme, setTheme] = useState("black");
-  const [session, setSession] = useState(null);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-    return () => subscription.unsubscribe();
-  }, []);
+  const { isLoading, user, isAuthenticated } = useUser();
 
   useEffect(() => {
     async function getMovies() {
@@ -47,51 +36,14 @@ function Test() {
     getMovies();
   }, []);
 
-  if (!session)
-    return (
-      <>
-        <button
-          className="btn border-[#e5e5e5] bg-white text-black"
-          onClick={loginGoogle}
-        >
-          <svg
-            aria-label="Google logo"
-            width="16"
-            height="16"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-          >
-            <g>
-              <path d="m0 0H512V512H0" fill="#fff"></path>
-              <path
-                fill="#34a853"
-                d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"
-              ></path>
-              <path
-                fill="#4285f4"
-                d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"
-              ></path>
-              <path
-                fill="#fbbc02"
-                d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"
-              ></path>
-              <path
-                fill="#ea4335"
-                d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"
-              ></path>
-            </g>
-          </svg>
-          Login with Google
-        </button>
-      </>
-    );
-  console.log(session);
+  // console.log(session);
+  if (isLoading) return <div>Loading..</div>;
+  if (!isLoading && !isAuthenticated) return <div>No Access</div>;
+
   return (
     <div className="" data-theme={theme}>
-      <h1>welcome {session?.user?.user_metadata?.name}</h1>
-      <button className="btn btn-primary" onClick={logOut}>
-        Log out
-      </button>
+      <h1>welcome {user?.user_metadata?.name}</h1>
+      <Logout />
       {/* <select onChange={(e) => setTheme(e.target.value)}>
         <option value="light">Default</option>
         <option value="dark">Dark</option>
@@ -434,7 +386,7 @@ function ThemeController({ theme, setTheme }) {
             <input
               type="radio"
               name="theme-dropdown"
-              className={`theme-controller ${theme === th ? "btn-primary" : "btn-ghost"} btn btn-sm btn-block w-full justify-start`}
+              className={`theme-controller ${theme === th ? "btn-primary" : "btn-ghost"} btn btn-sm btn-block justify-start`}
               aria-label={th.charAt(0).toUpperCase() + th.slice(1)}
               value={th}
               checked={theme === th}
