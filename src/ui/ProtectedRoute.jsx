@@ -1,6 +1,7 @@
 import { useUser } from "../features/authentication/useUser";
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
+import FullscreenSpinner from "./FullscreenSpinner";
 
 function ProtectedRoute({ children }) {
   const { isAuthenticated, isLoading } = useUser();
@@ -11,7 +12,7 @@ function ProtectedRoute({ children }) {
     },
     [isLoading, isAuthenticated, navigate],
   );
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <FullscreenSpinner />;
   if (isAuthenticated) return children;
 }
 

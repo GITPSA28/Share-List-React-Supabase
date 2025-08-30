@@ -1,8 +1,11 @@
 import React from "react";
+import { useTheme } from "../contexts/ThemeContext";
 
-export default function ThemeController({ theme, setTheme }) {
+export default function ThemeController() {
+  const { theme, handleThemeChange } = useTheme();
+  // console.log(theme, setTheme);
   const handleChange = (e) => {
-    setTheme(e.target.value);
+    handleThemeChange(e.target.value);
   };
   return (
     <div className="dropdown">

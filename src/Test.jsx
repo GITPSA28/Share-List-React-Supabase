@@ -4,33 +4,18 @@ import { useUser } from "./features/authentication/useUser.js";
 import Logout from "./features/authentication/Logout.jsx";
 
 function Test() {
-  const [movies, setMovies] = useState([]);
-  const [movieIds, setMovieIds] = useState([]);
-  const [theme, setTheme] = useState("black");
+  const [lists, setLists] = useState([]);
   const { isLoading, user, isAuthenticated } = useUser();
 
   useEffect(() => {
     async function getMovies() {
-      let { data: list_movies, error } = await supabase
-        .from("list_movies")
-        .select("*");
-      console.log(list_movies);
-
-      let movieDetailsReq = list_movies.map(async (movie) => {
-        let res = await fetch(
-          `https://api.themoviedb.org/3/movie/${movie.movie_id}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
-        );
-        return res.json();
-      });
-      let movieDetails = await Promise.all(movieDetailsReq);
-      console.log(movieDetails);
-      //   let movieDetails = JSON.parse(movieDetailsRes.data);
-      if (list_movies.length > 1) {
-        setMovieIds(list_movies);
-      }
-      if (movieDetails.length > 1) {
-        setMovies(movieDetails);
-      }
+      let { data: listsResult, error } = await supabase
+        .from("lists")
+        .select(`*,items (*)`)
+        .eq("owner_id", user.id)
+        .eq("items.type", "movie");
+      if (error) throw error;
+      setLists(listsResult);
     }
 
     getMovies();
@@ -41,214 +26,11 @@ function Test() {
   if (!isLoading && !isAuthenticated) return <div>No Access</div>;
 
   return (
-    <div className="" data-theme={theme}>
+    <div className="">
       <h1>welcome {user?.user_metadata?.name}</h1>
       <Logout />
-      {/* <select onChange={(e) => setTheme(e.target.value)}>
-        <option value="light">Default</option>
-        <option value="dark">Dark</option>
-        <option value="pink">Pink</option>
-      </select> */}
-      <ThemeController theme={theme} setTheme={setTheme} />
-      <ul className="list bg-base-100 rounded-box shadow-md">
-        <li className="p-4 pb-2 text-xs tracking-wide opacity-60">
-          Fav Movies
-        </li>
-        {/* 
-              adult:false
-              backdrop_path:"/6MmYsaK6poR8f4R8jsBnJBU5tfd.jpg"
-              belongs_to_collection:null
-              budget:7000000
-              genres:(2) [{…}, {…}]
-              homepage:"https://www.filmnation.com/library/gifted"
-              id:400928
-              imdb_id:"tt4481414"
-              origin_country:['US']
-              original_language:"en"
-              original_title:"Gifted"
-              overview:"Frank, a single man raising his child prodigy niece Mary, is drawn into a custody battle with his mother."
-              popularity:4.0583
-              poster_path:"/9Ts7Vc4wLlpI9oox9mkVUE1tBHy.jpg"
-              production_companies:(3) [{…}, {…}, {…}]
-              production_countries:(2) [{…}, {…}]
-              release_date:"2017-04-07"
-              revenue:40300000
-              runtime:101
-              spoken_languages:[{…}]
-              status:"Released"
-              tagline:""
-              title:"Gifted"
-              video:false
-              vote_average:8.004
-              vote_count:5731
-          */}
-        {movies.map((movie) => (
-          <li className="list-row my-2 items-center" key={movie.id}>
-            <div className="flex items-center justify-center">
-              {/* <img
-                className="rounded-box absolute w-18 opacity-80 blur"
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              /> */}
-              <img
-                className="rounded-box z-10 w-16"
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              />
-            </div>
-            <div>
-              <div className="text-xs font-semibold uppercase opacity-60">
-                {movie.title}
-              </div>
-              <div className="flex items-center gap-2 text-base">
-                {Math.round(movie.vote_average * 5) / 10}
-                <Rating value={movie.vote_average} />
-              </div>
-            </div>
-            <button className="btn btn-square btn-ghost">
-              <svg
-                className="size-[1.2em]"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-              >
-                <g
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  strokeWidth="2"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path d="M6 3L20 12 6 21 6 3z"></path>
-                </g>
-              </svg>
-            </button>
-            <button className="btn btn-square btn-ghost">
-              <svg
-                className="size-[1.2em]"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-              >
-                <g
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  strokeWidth="2"
-                  fill="currentColor"
-                  stroke="currentColor"
-                >
-                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                </g>
-              </svg>
-            </button>
-          </li>
-        ))}
-
-        <li className="list-row">
-          <div>
-            <img
-              className="rounded-box size-10"
-              src="https://img.daisyui.com/images/profile/demo/4@94.webp"
-            />
-          </div>
-          <div>
-            <div>Ellie Beilish</div>
-            <div className="text-xs font-semibold uppercase opacity-60">
-              Bears of a fever
-            </div>
-          </div>
-          <button className="btn btn-square btn-ghost">
-            <svg
-              className="size-[1.2em]"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <g
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path d="M6 3L20 12 6 21 6 3z"></path>
-              </g>
-            </svg>
-          </button>
-          <button className="btn btn-square btn-ghost">
-            <svg
-              className="size-[1.2em]"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <g
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </g>
-            </svg>
-          </button>
-        </li>
-
-        <li className="list-row">
-          <div>
-            <img
-              className="rounded-box size-10"
-              src="https://img.daisyui.com/images/profile/demo/3@94.webp"
-            />
-          </div>
-          <div>
-            <div>Sabrino Gardener</div>
-            <div className="text-xs font-semibold uppercase opacity-60">
-              Cappuccino
-            </div>
-          </div>
-          <button className="btn btn-square btn-ghost">
-            <svg
-              className="size-[1.2em]"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <g
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path d="M6 3L20 12 6 21 6 3z"></path>
-              </g>
-            </svg>
-          </button>
-          <button className="btn btn-square btn-ghost">
-            <svg
-              className="size-[1.2em]"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <g
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                strokeWidth="2"
-                fill="none"
-                stroke="currentColor"
-              >
-                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-              </g>
-            </svg>
-          </button>
-        </li>
-      </ul>
-
-      {movieIds.map((movie) => (
-        <li className="text-white" key={movie.id}>
-          {movie.movie_id}
-        </li>
-      ))}
-      {movies.map((movie) => (
-        <li className="text-white" key={movie.id}>
-          {movie.title}
-        </li>
-      ))}
+      {lists.length > 0 &&
+        lists.map((list) => <MovieList list={list} key={list.id} />)}
     </div>
   );
 }
@@ -322,79 +104,124 @@ function Rating({ value }) {
   );
 }
 
-function ThemeController({ theme, setTheme }) {
-  const handleChange = (e) => {
-    setTheme(e.target.value);
-  };
+{
+  /* 
+              adult:false
+              backdrop_path:"/6MmYsaK6poR8f4R8jsBnJBU5tfd.jpg"
+              belongs_to_collection:null
+              budget:7000000
+              genres:(2) [{…}, {…}]
+              homepage:"https://www.filmnation.com/library/gifted"
+              id:400928
+              imdb_id:"tt4481414"
+              origin_country:['US']
+              original_language:"en"
+              original_title:"Gifted"
+              overview:"Frank, a single man raising his child prodigy niece Mary, is drawn into a custody battle with his mother."
+              popularity:4.0583
+              poster_path:"/9Ts7Vc4wLlpI9oox9mkVUE1tBHy.jpg"
+              production_companies:(3) [{…}, {…}, {…}]
+              production_countries:(2) [{…}, {…}]
+              release_date:"2017-04-07"
+              revenue:40300000
+              runtime:101
+              spoken_languages:[{…}]
+              status:"Released"
+              tagline:""
+              title:"Gifted"
+              video:false
+              vote_average:8.004
+              vote_count:5731
+          */
+}
+function MovieList({ list }) {
+  const [movies, setMovies] = useState([]);
+  const { items: movieIds } = list;
+  console.log(list);
+  useEffect(() => {
+    async function getMovies() {
+      let movieDetailsReq = movieIds.map(async (movie) => {
+        let res = await fetch(
+          `https://api.themoviedb.org/3/movie/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+        );
+        return res.json();
+      });
+      let movieDetailsRes = await Promise.allSettled(movieDetailsReq);
+      let movieDetails = movieDetailsRes
+        .filter((res) => res.status === "fulfilled")
+        .map((res) => res.value);
+      console.log(movieDetails);
+      if (movieDetails.length > 1) {
+        setMovies(movieDetails);
+      }
+    }
+    getMovies();
+  }, []);
+  if (!movies.length) return;
   return (
-    <div className="dropdown">
-      <div tabIndex={0} role="button" className="btn m-1">
-        Theme
-        <svg
-          width="12px"
-          height="12px"
-          className="inline-block h-2 w-2 fill-current opacity-60"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 2048 2048"
-        >
-          <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
-        </svg>
-      </div>
-
-      <ul
-        tabIndex={0}
-        className="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl"
-      >
-        {[
-          "abyss",
-          "acid",
-          "aqua",
-          "autumn",
-          "black",
-          "bumblebee",
-          "business",
-          "caramellatte",
-          "cmyk",
-          "coffee",
-          "corporate",
-          "cupcake",
-          "cyberpunk",
-          "dark",
-          "dim",
-          "dracula",
-          "emerald",
-          "fantasy",
-          "forest",
-          "garden",
-          "halloween",
-          "lemonade",
-          "light",
-          "lofi",
-          "luxury",
-          "night",
-          "nord",
-          "pastel",
-          "retro",
-          "silk",
-          "sunset",
-          "synthwave",
-          "valentine",
-          "winter",
-          "wireframe",
-        ].map((th) => (
-          <li key={th}>
-            <input
-              type="radio"
-              name="theme-dropdown"
-              className={`theme-controller ${theme === th ? "btn-primary" : "btn-ghost"} btn btn-sm btn-block justify-start`}
-              aria-label={th.charAt(0).toUpperCase() + th.slice(1)}
-              value={th}
-              checked={theme === th}
-              onChange={handleChange}
-            />
+    <>
+      <ul className="list bg-base-100 rounded-box shadow-md">
+        <li className="p-4 pb-2 text-xs tracking-wide opacity-60">
+          {list.list_name}
+        </li>
+        {movies.map((movie) => (
+          <li className="list-row my-2 items-center" key={movie.id}>
+            <div className="flex items-center justify-center">
+              {/* <img
+                className="rounded-box absolute w-18 opacity-80 blur"
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              /> */}
+              <img
+                className="rounded-box z-10 w-16"
+                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+              />
+            </div>
+            <div>
+              <div className="text-xs font-semibold uppercase opacity-60">
+                {movie.title}
+              </div>
+              <div className="flex items-center gap-2 text-base">
+                {Math.round(movie.vote_average * 5) / 10}
+                <Rating value={movie.vote_average} />
+              </div>
+            </div>
+            <button className="btn btn-square btn-ghost">
+              <svg
+                className="size-[1.2em]"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <g
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path d="M6 3L20 12 6 21 6 3z"></path>
+                </g>
+              </svg>
+            </button>
+            <button className="btn btn-square btn-ghost">
+              <svg
+                className="size-[1.2em]"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+              >
+                <g
+                  strokeLinejoin="round"
+                  strokeLinecap="round"
+                  strokeWidth="2"
+                  fill="currentColor"
+                  stroke="currentColor"
+                >
+                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+                </g>
+              </svg>
+            </button>
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 }

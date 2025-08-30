@@ -1,0 +1,53 @@
+import React, { useEffect, useState } from "react";
+import UserName from "../ui/UserName";
+import { useUpdateUsername } from "../features/username/useUpdateUsername";
+import Logout from "../features/authentication/Logout";
+import { useNavigate } from "react-router";
+import { useUsername } from "../features/username/useUserName";
+import FullscreenSpinner from "../ui/FullscreenSpinner";
+
+export default function SetUserName() {
+  const [username, setUsername] = useState("");
+  const { isUpdating, updateUsername } = useUpdateUsername();
+  const { hasUsername, isLoading } = useUsername();
+  const navigate = useNavigate();
+  useEffect(
+    function () {
+      if (hasUsername && !isLoading) {
+        navigate("/home", { replace: true });
+      }
+    },
+    [hasUsername, isLoading, navigate],
+  );
+
+  function handleSubmit() {
+    updateUsername(
+      { username },
+      {
+        onSuccess: () => {
+          navigate("/home", { replace: true });
+        },
+      },
+    );
+  }
+  if (isLoading || isUpdating) return <FullscreenSpinner />;
+  return (
+    <div className="flex h-dvh flex-col items-center justify-center">
+      <fieldset className="fieldset">
+        <legend className="fieldset-legend">Set Username to Continue</legend>
+        <UserName setUsername={setUsername} />
+        <button
+          disabled={username.length < 3}
+          onClick={handleSubmit}
+          className="btn btn-primary"
+        >
+          Submit
+        </button>
+        <p className="label">You can edit username later from settings</p>
+      </fieldset>
+      <div className="m-5">
+        <Logout />
+      </div>
+    </div>
+  );
+}

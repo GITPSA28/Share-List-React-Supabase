@@ -4,6 +4,10 @@ import Test from "./test";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import AppLayout from "./ui/AppLayout";
+import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
+import Settings from "./pages/Settings";
+import CheckUsername from "./ui/CheckUsername";
+import SetUserName from "./pages/SetUserName";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -13,34 +17,31 @@ const queryClient = new QueryClient({
 });
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* <Test /> */}
-      <BrowserRouter>
-        <Routes>
-          <Route
-            element={
-              <ProtectedRoute>
-                <AppLayout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate replace to="/home" />} />
-            <Route path="home" element={<Test />} />
-            {/* <Route index element={<Navigate replace to="/dashboard" />} />
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="bookings" element={<Bookings />} />
-              <Route path="bookings/:bookingId" element={<Booking />} />
-              <Route path="checkin/:bookingId" element={<Checkin />} />
-              <Route path="cabins" element={<Cabins />} />
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              element={
+                <ProtectedRoute>
+                  <CheckUsername>
+                    <AppLayout />
+                  </CheckUsername>
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate replace to="/home" />} />
+              <Route path="home" element={<Test />} />
               <Route path="settings" element={<Settings />} />
-              <Route path="users" element={<Users />} />
-              <Route path="account" element={<Account />} /> */}
-          </Route>
-          <Route path="login" element={<Login />} />
-          {/* <Route path="*" element={<PageNotFound />} /> */}
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
+            </Route>
+            <Route path="login" element={<Login />} />
+            <Route path="setusername" element={<SetUserName />} />
+
+            {/* <Route path="*" element={<PageNotFound />} /> */}
+          </Routes>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </ThemeProvider>
   );
 }
 
