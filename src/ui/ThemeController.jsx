@@ -1,15 +1,53 @@
 import React from "react";
 import { useTheme } from "../contexts/ThemeContext";
 
-export default function ThemeController() {
+const allThemes = [
+  "abyss",
+  "acid",
+  "aqua",
+  "autumn",
+  "black",
+  "bumblebee",
+  "business",
+  "caramellatte",
+  "cmyk",
+  "coffee",
+  "corporate",
+  "cupcake",
+  "cyberpunk",
+  "dark",
+  "dim",
+  "dracula",
+  "emerald",
+  "fantasy",
+  "forest",
+  "garden",
+  "halloween",
+  "lemonade",
+  "light",
+  "lofi",
+  "luxury",
+  "night",
+  "nord",
+  "pastel",
+  "retro",
+  "silk",
+  "sunset",
+  "synthwave",
+  "valentine",
+  "winter",
+  "wireframe",
+];
+
+export default function ThemeController({ themes = allThemes }) {
   const { theme, handleThemeChange } = useTheme();
   // console.log(theme, setTheme);
   const handleChange = (e) => {
     handleThemeChange(e.target.value);
   };
   return (
-    <div className="dropdown">
-      <div tabIndex={0} role="button" className="btn m-1">
+    <div className="dropdown dropdown-end p-0">
+      <div tabIndex={0} role="button" className="btn">
         Theme
         <svg
           width="12px"
@@ -22,47 +60,8 @@ export default function ThemeController() {
         </svg>
       </div>
 
-      <ul
-        tabIndex={0}
-        className="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl"
-      >
-        {[
-          "abyss",
-          "acid",
-          "aqua",
-          "autumn",
-          "black",
-          "bumblebee",
-          "business",
-          "caramellatte",
-          "cmyk",
-          "coffee",
-          "corporate",
-          "cupcake",
-          "cyberpunk",
-          "dark",
-          "dim",
-          "dracula",
-          "emerald",
-          "fantasy",
-          "forest",
-          "garden",
-          "halloween",
-          "lemonade",
-          "light",
-          "lofi",
-          "luxury",
-          "night",
-          "nord",
-          "pastel",
-          "retro",
-          "silk",
-          "sunset",
-          "synthwave",
-          "valentine",
-          "winter",
-          "wireframe",
-        ].map((th) => (
+      <ul className="dropdown-content menu bg-base-300 rounded-box z-1 w-52 shadow-2xl">
+        {themes.map((th) => (
           <li key={th}>
             <input
               type="radio"
