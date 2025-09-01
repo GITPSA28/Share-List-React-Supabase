@@ -5,7 +5,7 @@ const ThemeContext = createContext(null);
 
 function ThemeProvider({ children }) {
   const [theme, setTheme] = useLocalStorage("dark", "user-theme");
-  console.log(theme, setTheme);
+  // console.log(theme, setTheme);
   function handleThemeChange(value) {
     setTheme(value);
   }

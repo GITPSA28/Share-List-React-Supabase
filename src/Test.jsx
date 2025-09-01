@@ -26,7 +26,7 @@ function Test() {
   if (!isLoading && !isAuthenticated) return <div>No Access</div>;
 
   return (
-    <div className="">
+    <div className="bg-base-100">
       <h1>welcome {user?.user_metadata?.name}</h1>
       <Logout />
       {lists.length > 0 &&

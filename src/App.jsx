@@ -8,6 +8,7 @@ import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
 import Settings from "./pages/Settings";
 import CheckUsername from "./ui/CheckUsername";
 import SetUserName from "./pages/SetUserName";
+import SearchPage from "./pages/SearchPage";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -32,6 +33,7 @@ function App() {
             >
               <Route index element={<Navigate replace to="/home" />} />
               <Route path="home" element={<Test />} />
+              <Route path="search" element={<SearchPage />} />
               <Route path="settings" element={<Settings />} />
             </Route>
             <Route path="login" element={<Login />} />

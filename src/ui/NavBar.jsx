@@ -1,58 +1,44 @@
 import React from "react";
-import { useUser } from "../features/authentication/useUser";
 import Logout from "../features/authentication/Logout";
-import Spinner from "./Spinner";
+import LogoIcon from "./LogoIcon";
+import { Link } from "react-router";
+import ThemeController from "./ThemeController";
+// import SearchBar from "./SearchBar";
 
-export default function NavBar() {
-  const { user, isLoading } = useUser();
-  if (isLoading) return <Spinner />;
-  if (!isLoading && user)
-    return (
-      <div className="navbar bg-base-100 shadow-sm">
-        <div className="navbar-start">
-          <div className="dropdown">
-            <div
-              tabIndex={0}
-              role="button"
-              className="btn btn-ghost btn-circle"
+export default function NavBar({ user }) {
+  return (
+    <div className="bg-base-100/90 text-base-content sticky top-0 z-30 flex h-16 w-full [transform:translate3d(0,0,0)] justify-center shadow-xs backdrop-blur transition-shadow duration-100 print:hidden">
+      <div className="navbar">
+        <div className="flex flex-1 items-center justify-start gap-1">
+          <label
+            htmlFor="my-drawer-2"
+            className="btn btn-ghost drawer-button lg:hidden"
+          >
+            <svg
+              width="20"
+              height="20"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              className="inline-block h-5 w-5 stroke-current md:h-6 md:w-6"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {" "}
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16M4 18h7"
-                />{" "}
-              </svg>
-            </div>
-            <ul
-              tabIndex={0}
-              className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
-            >
-              <li>
-                <a>Homepage</a>
-              </li>
-              <li>
-                <a>Portfolio</a>
-              </li>
-              <li>
-                <a>About</a>
-              </li>
-            </ul>
-          </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </label>
+          <LogoIcon className="fill-base-content h-9 w-9 lg:hidden" />
+          <a className="text-2xl font-bold lg:hidden">Share List</a>
+          {/* <div className="hidden lg:block">
+              <SearchBar />
+            </div> */}
         </div>
-        <div className="navbar-center">
-          <a className="btn btn-ghost text-xl">Share List</a>
-        </div>
-        <div className="navbar-end">
-          <button className="btn btn-ghost btn-circle">
+
+        <div className="flex">
+          <Link to="/search" className="btn btn-ghost btn-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -68,7 +54,7 @@ export default function NavBar() {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />{" "}
             </svg>
-          </button>
+          </Link>
           <button className="btn btn-ghost btn-circle">
             <div className="indicator">
               <svg
@@ -114,14 +100,18 @@ export default function NavBar() {
                 </a>
               </li>
               <li>
-                <a>Settings</a>
+                <Link to={"/settings"}>Settings</Link>
               </li>
               <li className="flex justify-end p-5">
                 <Logout />
               </li>
+              <div className="hidden justify-center">
+                <ThemeController />
+              </div>
             </ul>
           </div>
         </div>
       </div>
-    );
+    </div>
+  );
 }
