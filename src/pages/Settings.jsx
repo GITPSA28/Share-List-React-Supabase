@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ThemeController from "../ui/ThemeController";
 import UserName from "../ui/UserName";
+import Logout from "../features/authentication/Logout";
 
 export default function Settings() {
   const [username, setUsername] = useState();
@@ -9,6 +10,7 @@ export default function Settings() {
       <p>Settings</p>
       <ThemeController />
       <UserName setUsername={setUsername} />
+      <Logout />
     </div>
   );
 }

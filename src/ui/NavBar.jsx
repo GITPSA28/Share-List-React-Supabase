@@ -102,10 +102,7 @@ export default function NavBar({ user }) {
               <li>
                 <Link to={"/settings"}>Settings</Link>
               </li>
-              <li className="flex justify-end p-5">
-                <Logout />
-              </li>
-              <div className="hidden justify-center">
+              <div className="flex justify-center pt-2">
                 <ThemeController />
               </div>
             </ul>

@@ -19,14 +19,6 @@ export async function getUserProfileData({ id }) {
 }
 
 export async function checkUsernameExists({ input }) {
-  console.log("working");
-  // if (!id) {
-  //   const { data: session } = await supabase.auth.getSession();
-  //   if (!session.session) return null;
-  //   const { data: userData, error } = await supabase.auth.getUser();
-  //   id = userData.user.id;
-  // }
-  // console.log(id);
   if (!input) return;
   const { data, error } = await supabase
     .from("profiles")
@@ -51,4 +43,16 @@ export async function updateUserProfile({ username }) {
   if (error) throw error;
   console.log(data);
   return data;
+}
+
+export async function searchUsers(input) {
+  if (!input) return;
+  console.log("input", input);
+  let { data: profiles, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .ilike("username", `%${input}%`)
+    .range(0, 9);
+  if (error) throw new Error(error.message);
+  return profiles;
 }

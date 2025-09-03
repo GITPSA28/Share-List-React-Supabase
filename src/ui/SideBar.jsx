@@ -1,6 +1,7 @@
 import React from "react";
 import LogoIcon from "./LogoIcon";
 import SearchBar from "./SearchBar";
+import { Link } from "react-router";
 
 export default function SideBar() {
   return (
@@ -22,7 +23,7 @@ function SideBarLinks() {
   return (
     <ul className="menu w-full p-4">
       <li>
-        <a href="#" className="menu-active">
+        <Link to="/home" className="menu-active">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -38,10 +39,10 @@ function SideBarLinks() {
             />
           </svg>
           Home
-        </a>
+        </Link>
       </li>
       <li>
-        <a href="#">
+        <Link to="/friends">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -57,10 +58,10 @@ function SideBarLinks() {
             />
           </svg>
           Friends
-        </a>
+        </Link>
       </li>
       <li>
-        <a href="">
+        <Link to="#">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -76,7 +77,7 @@ function SideBarLinks() {
             />
           </svg>
           Recomendations
-        </a>
+        </Link>
       </li>
       <li>
         <details open>

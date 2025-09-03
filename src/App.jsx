@@ -9,6 +9,8 @@ import Settings from "./pages/Settings";
 import CheckUsername from "./ui/CheckUsername";
 import SetUserName from "./pages/SetUserName";
 import SearchPage from "./pages/SearchPage";
+import Friends from "./pages/Friends";
+import Profile from "./pages/Profile";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -34,6 +36,8 @@ function App() {
               <Route index element={<Navigate replace to="/home" />} />
               <Route path="home" element={<Test />} />
               <Route path="search" element={<SearchPage />} />
+              <Route path="friends" element={<Friends />} />
+              <Route path="profile/:username" element={<Profile />} />
               <Route path="settings" element={<Settings />} />
             </Route>
             <Route path="login" element={<Login />} />
