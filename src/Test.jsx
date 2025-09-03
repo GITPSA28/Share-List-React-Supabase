@@ -21,7 +21,7 @@ function Test() {
     getMovies();
   }, []);
 
-  // console.log(session);
+  console.log("lists", lists);
   if (isLoading) return <div>Loading..</div>;
   if (!isLoading && !isAuthenticated) return <div>No Access</div>;
 
@@ -136,11 +136,11 @@ function Rating({ value }) {
 }
 function MovieList({ list }) {
   const [movies, setMovies] = useState([]);
-  const { items: movieIds } = list;
+  const { items } = list;
   console.log(list);
   useEffect(() => {
     async function getMovies() {
-      let movieDetailsReq = movieIds.map(async (movie) => {
+      let movieDetailsReq = items.map(async (movie) => {
         let res = await fetch(
           `https://api.themoviedb.org/3/movie/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
         );
@@ -151,12 +151,13 @@ function MovieList({ list }) {
         .filter((res) => res.status === "fulfilled")
         .map((res) => res.value);
       console.log(movieDetails);
-      if (movieDetails.length > 1) {
+      if (movieDetails.length > 0) {
         setMovies(movieDetails);
       }
     }
     getMovies();
   }, []);
+  console.log(movies);
   if (!movies.length) return;
   return (
     <>
