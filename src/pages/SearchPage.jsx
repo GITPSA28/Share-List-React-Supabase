@@ -3,7 +3,6 @@ import SearchBar from "../ui/SearchBar";
 import { useSearchParams } from "react-router";
 import { useSearchMovies } from "../features/tmdb/useSearchMovies";
 import Spinner from "../ui/Spinner";
-import { useTheme } from "../contexts/ThemeContext";
 import { addToUserList } from "../services/apiUserList";
 
 export default function SearchPage() {
@@ -12,7 +11,7 @@ export default function SearchPage() {
   const { isLoading, movieResults } = useSearchMovies();
 
   useEffect(() => {
-    console.log(searchParams.get("query"));
+    setValue(searchParams.get("query"));
   }, [searchParams]);
   function handleSubmit(e) {
     e.preventDefault();

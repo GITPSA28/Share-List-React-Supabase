@@ -56,3 +56,15 @@ export async function searchUsers(input) {
   if (error) throw new Error(error.message);
   return profiles;
 }
+
+export async function getUserProfileDataByUserName({ username }) {
+  console.log("working");
+  console.log(username);
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("username", username);
+  if (error) throw new Error(error.message);
+  if (data.length < 1) throw new Error("No data");
+  return data[0];
+}
