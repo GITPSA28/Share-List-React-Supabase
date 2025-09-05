@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchBar from "../ui/SearchBar";
 import { searchUsers } from "../services/apiProfile";
 import { Link } from "react-router";
+import { getFriendsDetails } from "../services/apiFriends";
+import { useUser } from "../features/authentication/useUser";
+import FullscreenSpinner from "../ui/FullscreenSpinner";
+import Spinner from "../ui/Spinner";
 
 export default function Friends() {
   const [curTab, setTab] = useState(0);
-
+  const { user, isLoading } = useUser();
+  console.log("0000000000", user);
+  if (isLoading || !user) return <FullscreenSpinner />;
   return (
     <div className="bg-base-100 flex min-h-svh flex-col items-center pt-10">
       <div role="tablist" className="tabs tabs-border">
@@ -25,11 +31,55 @@ export default function Friends() {
         </button>
       </div>
 
-      <div>
-        {curTab === 0 && <p>Friends list</p>}
+      <div className="max-w-xl min-w-72 pt-3 sm:min-w-sm">
+        {curTab === 0 && <MyFriends user_id={user.id} />}
         {curTab === 1 && <AddFriends />}
       </div>
     </div>
+  );
+}
+
+function MyFriends({ user_id }) {
+  const [friends, setFriends] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    async function getFriends() {
+      setIsLoading(true);
+      if (!user_id) {
+        setIsLoading(false);
+        return;
+      }
+      try {
+        console.log(user_id);
+        const res = await getFriendsDetails(user_id, "accepted");
+        setFriends(res);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getFriends();
+  }, [user_id]);
+  console.log(friends);
+  if (isLoading) return <Spinner />;
+  //   return <></>;
+  return (
+    <ul className="list pt-2">
+      {friends &&
+        friends.map((user) => {
+          return (
+            <li key={user.id}>
+              <Link
+                className="bg-base-300 text-base-content rounded-box m-2 flex cursor-pointer gap-4 p-2"
+                to={`/profile/${user.username}`}
+              >
+                <UserItem user={user} />
+              </Link>
+            </li>
+          );
+        })}
+    </ul>
   );
 }
 
@@ -44,7 +94,7 @@ function AddFriends() {
     setResults(res);
   }
   return (
-    <div className="max-w-xl min-w-72 pt-3 sm:min-w-sm">
+    <>
       <form onSubmit={handleSearch}>
         <SearchBar value={value} onChange={(val) => setValue(val)} />
       </form>
@@ -62,7 +112,7 @@ function AddFriends() {
           );
         })}
       </ul>
-    </div>
+    </>
   );
 }
 

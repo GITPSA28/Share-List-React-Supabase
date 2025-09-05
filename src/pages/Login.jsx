@@ -5,6 +5,7 @@ import supabase from "../services/supabase";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import { getTMDBMovieLists } from "../services/apiTmdb";
 import ThemeController from "../ui/ThemeController";
+import LogoIcon from "../ui/LogoIcon";
 
 export default function Login() {
   const [isLoading, setIsLoading] = useState(true);
@@ -101,20 +102,16 @@ function LoginPage({ children, login }) {
                 : `https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp`
             }
             alt={movie.title}
-            className={`fixed h-dvh w-full object-cover blur-md transition-opacity duration-300 ${movies[curMovieIndex].id === movie.id ? "opacity-100" : "opacity-0"}`}
+            className={`fixed h-dvh w-full object-cover transition-opacity duration-300 ${movies[curMovieIndex].id === movie.id ? "opacity-100" : "opacity-0"}`}
           />
         );
       })}
 
-      <div className="bg-base-100 fixed flex h-dvh w-full opacity-60 md:bg-black md:opacity-40"></div>
+      <div className="bg-base-200/60 fixed flex h-dvh w-full backdrop-blur-lg sm:bg-black/40"></div>
       <div className="navbar bg-neutral/30 border-neutral/40 relative flex border-b-2 md:px-12 lg:px-36">
         <div className="flex-1">
           <a className="text-neutral-content flex w-fit cursor-default items-center justify-center text-lg font-bold uppercase md:text-2xl">
-            <img
-              className="w-12 invert md:w-16"
-              src="/sharelistlogo.png"
-              alt="logo"
-            />
+            <LogoIcon className="fill-neutral-content h-9 w-9" />
             Share List
           </a>
         </div>
@@ -147,7 +144,7 @@ function LoginPage({ children, login }) {
         </div>
       </div>
       <div className="hero relative h-dvh bg-transparent">
-        <div className="hero-content text-base-content sm:bg-base-100/70 w-full flex-col sm:w-fit sm:flex-row sm:rounded-2xl">
+        <div className="hero-content text-base-content sm:bg-base-100/70 sm:rounded-box w-full flex-col sm:w-fit sm:flex-row">
           <div className="h-60 w-40 lg:h-84 lg:w-56" onClick={handleUserClick}>
             {movies.map((movie) => {
               return (
@@ -159,7 +156,7 @@ function LoginPage({ children, login }) {
                       : `https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp`
                   }
                   alt={movie.title}
-                  className={`absolute w-40 max-w-sm rounded-lg shadow-2xl transition-opacity duration-300 lg:w-56 ${movies[curMovieIndex].id === movie.id ? "opacity-100" : "opacity-0"}`}
+                  className={`rounded-box absolute w-40 max-w-sm shadow-2xl transition-opacity duration-300 lg:w-56 ${movies[curMovieIndex].id === movie.id ? "opacity-100" : "opacity-0"}`}
                 />
               );
             })}
@@ -224,7 +221,7 @@ function LoginPage({ children, login }) {
 function LoginWithGoogle({ login, children }) {
   return (
     <button
-      className="btn hover:shadow-base/10 w-fit hover:shadow-xl"
+      className="btn btn-primary hover:shadow-base/10 w-fit hover:shadow-xl"
       onClick={login}
     >
       <svg

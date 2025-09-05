@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import SearchBar from "../ui/SearchBar";
 import { useSearchParams } from "react-router";
 import { useSearchMovies } from "../features/tmdb/useSearchMovies";
@@ -9,9 +9,15 @@ export default function SearchPage() {
   const [value, setValue] = useState("");
   const [searchParams, setSearchParams] = useSearchParams();
   const { isLoading, movieResults } = useSearchMovies();
+  const searchBarRef = useRef(null);
 
   useEffect(() => {
-    setValue(searchParams.get("query"));
+    if (!searchBarRef.current) return;
+    searchBarRef.current.click();
+    searchBarRef.current.focus();
+  }, [searchBarRef]);
+  useEffect(() => {
+    setValue(searchParams.get("query") || "");
   }, [searchParams]);
   function handleSubmit(e) {
     e.preventDefault();
@@ -24,7 +30,11 @@ export default function SearchPage() {
     <div className="bg-base-100 min-h-svh pt-10">
       <div className="flex w-full items-center justify-center">
         <form onSubmit={handleSubmit} className="w-full max-w-lg">
-          <SearchBar value={value} onChange={onValueChange} />
+          <SearchBar
+            value={value}
+            ref={searchBarRef}
+            onChange={onValueChange}
+          />
         </form>
       </div>
       <div>

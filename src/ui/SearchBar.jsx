@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function SearchBar({ value, onChange }) {
+export default function SearchBar({ value, onChange, ref = null }) {
   return (
     <label className="input w-full">
       <svg
@@ -22,6 +22,7 @@ export default function SearchBar({ value, onChange }) {
       <input
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        ref={ref}
         type="search"
         className="grow text-base"
         placeholder="Search"
