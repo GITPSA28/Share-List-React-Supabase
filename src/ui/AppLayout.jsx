@@ -8,7 +8,7 @@ export default function () {
   return (
     <div data-theme={theme}>
       <Drawer>
-        <main className="bg-base-100 px-2 pb-16 sm:px-6 xl:pe-2">
+        <main className="bg-base-100 min-h-svh px-2 pb-16 sm:px-6 xl:pe-2">
           <Outlet />
         </main>
       </Drawer>

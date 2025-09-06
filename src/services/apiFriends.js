@@ -1,6 +1,8 @@
+import { getCurrentUser } from "./apiAuth";
 import supabase from "./supabase";
 
-export async function sendFriendRequest(user_id, friend_id) {
+export async function sendFriendRequest(friend_id) {
+  const { id: user_id } = await getCurrentUser();
   const { data, error } = await supabase
     .from("friends")
     .insert([{ user_id, friend_id }])
@@ -8,7 +10,8 @@ export async function sendFriendRequest(user_id, friend_id) {
   if (error) throw error;
   return data[0];
 }
-export async function getFriendStatus(user_id, friend_id) {
+export async function getFriendStatus({ friend_id }) {
+  const { id: user_id } = await getCurrentUser();
   const { data, error } = await supabase
     .from("friends")
     .select("*")
@@ -20,10 +23,11 @@ export async function getFriendStatus(user_id, friend_id) {
   return data[0];
 }
 
-export async function acceptFriendRequest(user_id, friend_id) {
+export async function acceptFriendRequest(friend_id) {
+  const { id: user_id } = await getCurrentUser();
   const { data, error } = await supabase
     .from("friends")
-    .update({ status: "accept" })
+    .update({ status: "accepted" })
     .eq("user_id", friend_id)
     .eq("friend_id", user_id)
     .select();
@@ -32,7 +36,8 @@ export async function acceptFriendRequest(user_id, friend_id) {
   return data[0];
 }
 
-export async function rejectFriendRequest(user_id, friend_id) {
+export async function rejectFriendRequest(friend_id) {
+  const { id: user_id } = await getCurrentUser();
   const { data, error } = await supabase
     .from("friends")
     .delete()
@@ -43,7 +48,8 @@ export async function rejectFriendRequest(user_id, friend_id) {
   return data;
 }
 
-export async function getFriendsDetails(user_id, status) {
+export async function getFriendsDetails(status) {
+  const { id: user_id } = await getCurrentUser();
   const { data, error } = await supabase
     .from("friends")
     .select(

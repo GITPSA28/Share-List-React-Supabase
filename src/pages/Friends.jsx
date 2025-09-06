@@ -51,7 +51,7 @@ function MyFriends({ user_id }) {
       }
       try {
         console.log(user_id);
-        const res = await getFriendsDetails(user_id, "accepted");
+        const res = await getFriendsDetails("accepted");
         setFriends(res);
       } catch (e) {
         console.log(e);
