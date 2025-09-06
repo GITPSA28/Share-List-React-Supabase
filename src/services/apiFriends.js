@@ -20,14 +20,27 @@ export async function getFriendStatus(user_id, friend_id) {
   return data[0];
 }
 
-export async function accpetFriendRequest(user_id) {
+export async function acceptFriendRequest(user_id, friend_id) {
   const { data, error } = await supabase
     .from("friends")
-    .update({ status: "accepted" })
+    .update({ status: "accept" })
+    .eq("user_id", friend_id)
+    .eq("friend_id", user_id)
     .select();
   if (error) throw error;
   if (!data.length) return null;
   return data[0];
+}
+
+export async function rejectFriendRequest(user_id, friend_id) {
+  const { data, error } = await supabase
+    .from("friends")
+    .delete()
+    .or(
+      `and(user_id.eq.${user_id},friend_id.eq.${friend_id}),and(user_id.eq.${friend_id},friend_id.eq.${user_id})`,
+    );
+  if (error) throw error;
+  return data;
 }
 
 export async function getFriendsDetails(user_id, status) {

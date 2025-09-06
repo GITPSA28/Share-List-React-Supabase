@@ -5,13 +5,18 @@ import FullscreenSpinner from "../ui/FullscreenSpinner";
 import supabase from "../services/supabase";
 import Spinner from "../ui/Spinner";
 import { useUser } from "../features/authentication/useUser";
-import { getFriendStatus, sendFriendRequest } from "../services/apiFriends";
+import {
+  acceptFriendRequest,
+  getFriendStatus,
+  rejectFriendRequest,
+  sendFriendRequest,
+} from "../services/apiFriends";
 
 export default function Profile() {
   const { username } = useParams();
   const [userData, setUserData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [friendship, setFreindship] = useState(null);
+
   const { user, isLoading: isLoadingUser } = useUser();
 
   useEffect(() => {
@@ -22,9 +27,6 @@ export default function Profile() {
         return;
       }
       setUserData(data);
-      const friendshipRes = await getFriendStatus(data.id, user.id);
-      if (friendshipRes) setFreindship(friendshipRes);
-      console.log(friendshipRes);
       setIsLoading(false);
       //   console.log(data);
     }
@@ -32,10 +34,6 @@ export default function Profile() {
     getData();
   }, [user]);
 
-  function onStatusChange(friendshipRes) {
-    if (friendshipRes) setFreindship(friendshipRes);
-  }
-  console.log(friendship);
   if (isLoading || isLoadingUser) return <FullscreenSpinner />;
   return (
     <div className="bg-base-100 flex flex-col items-center justify-center pt-8">
@@ -56,57 +54,14 @@ export default function Profile() {
               </div>
             </div>
           )}
-          <h1 className="text-xl font-semibold uppercase">
+          <h1 className="text-xl font-semibold lowercase">
             @{userData.username}
           </h1>
-          <div className="text-sm font-semibold uppercase opacity-80">
+          <div className="text-sm font-semibold opacity-80">
             {userData.full_name}
           </div>
         </div>
-        {userData.id != user.id && (
-          <div className="flex justify-center">
-            {friendship === null && (
-              <AddFriend
-                onStatusChange={onStatusChange}
-                friend_id={userData.id}
-                className="btn btn-primary w-8/12 max-w-sm"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
-                  />
-                </svg>
-                Add Friend
-              </AddFriend>
-            )}
-            {friendship.status === "requested" &&
-              friendship.user_id === user.id && (
-                <button className="btn btn-primary w-8/12 max-w-sm">
-                  Requested
-                </button>
-              )}
-            {friendship.status === "requested" &&
-              friendship.friend_id === user.id && (
-                <button className="btn btn-primary w-8/12 max-w-sm">
-                  Accept
-                </button>
-              )}
-            {friendship.status === "accepted" && (
-              <button className="btn btn-primary w-8/12 max-w-sm">
-                Friends
-              </button>
-            )}
-          </div>
-        )}
+        <FriendControll friend_id={userData.id} user_id={user.id} />
         <div className="flex justify-center">
           <AllLists owner_id={userData.id} />
         </div>
@@ -115,25 +70,194 @@ export default function Profile() {
   );
 }
 
-function AddFriend({ className, friend_id, onStatusChange, children }) {
-  const { user, isLoading } = useUser();
+function FriendControll({ friend_id, user_id }) {
+  const [friendship, setFreindship] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    async function getFriendship() {
+      try {
+        const friendshipRes = await getFriendStatus(friend_id, user_id);
+        if (friendshipRes) setFreindship(friendshipRes);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getFriendship();
+  }, []);
+  async function onStatusChange() {
+    setIsLoading(true);
+    const friendshipRes = await getFriendStatus(friend_id, user_id);
+    setFreindship(friendshipRes);
+    setIsLoading(false);
+  }
+  if (!friendship && friend_id != user_id)
+    return (
+      <div className="flex justify-center gap-2">
+        <AddFriend
+          onStatusChange={onStatusChange}
+          friend_id={friend_id}
+          className="btn btn-primary btn-sm"
+          isLoading={isLoading}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z"
+            />
+          </svg>
+          Add Friend
+        </AddFriend>
+      </div>
+    );
+  return (
+    <>
+      {friend_id != user_id && (
+        <div className="flex justify-center gap-2">
+          {friendship.status === "requested" &&
+            friendship.user_id === user_id && (
+              <RejectFriendRequest
+                className={"btn btn-error btn-sm"}
+                friend_id={friend_id}
+                onStatusChange={onStatusChange}
+                isLoading={isLoading}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-4"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                  />
+                </svg>
+                Cancel Request
+              </RejectFriendRequest>
+            )}
+          {friendship.status === "requested" &&
+            friendship.friend_id === user_id && (
+              <>
+                <button className="btn btn-success btn-sm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  Accept
+                </button>
+
+                <RejectFriendRequest
+                  className={"btn btn-error btn-sm"}
+                  friend_id={friend_id}
+                  onStatusChange={onStatusChange}
+                  isLoading={isLoading}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="size-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+                    />
+                  </svg>
+                  Reject
+                </RejectFriendRequest>
+              </>
+            )}
+          {friendship.status === "accepted" && (
+            <button className="btn btn-sm btn-error">Remove Friend</button>
+          )}
+        </div>
+      )}
+    </>
+  );
+}
+
+function RejectFriendRequest({
+  className,
+  friend_id,
+  onStatusChange,
+  children,
+  isLoading,
+}) {
+  const { user, isLoading: isUserLoading } = useUser();
+  async function handleFriendRequestUpdate() {
+    try {
+      const res = await rejectFriendRequest(user.id, friend_id);
+      onStatusChange();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  return (
+    <button
+      disabled={isUserLoading || isLoading}
+      onClick={handleFriendRequestUpdate}
+      className={className}
+    >
+      {(isLoading || isUserLoading) && (
+        <span className="loading loading-spinner"></span>
+      )}
+      {children}
+    </button>
+  );
+}
+
+function AddFriend({
+  className,
+  friend_id,
+  onStatusChange,
+  isLoading,
+  children,
+}) {
+  const { user, isLoading: isUserLoading } = useUser();
   async function handleFriendRequest() {
     try {
       const res = await sendFriendRequest(user.id, friend_id);
-
       onStatusChange(res);
     } catch (e) {
       console.log(e);
     }
   }
-  if (isLoading)
-    return (
-      <button className={className}>
-        <Spinner />
-      </button>
-    );
   return (
-    <button onClick={handleFriendRequest} className={className}>
+    <button
+      disabled={isUserLoading || isLoading}
+      onClick={handleFriendRequest}
+      className={className}
+    >
+      {(isUserLoading || isLoading) && (
+        <span className="loading loading-spinner"></span>
+      )}
       {children}
     </button>
   );
@@ -166,7 +290,6 @@ function MovieList({ list }) {
   const [movies, setMovies] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const { items } = list;
-  console.log(list);
   useEffect(() => {
     async function getMovies() {
       setIsLoading(true);
@@ -178,9 +301,8 @@ function MovieList({ list }) {
       });
       let movieDetailsRes = await Promise.allSettled(movieDetailsReq);
       let movieDetails = movieDetailsRes
-        .filter((res) => res.status === "fulfilled")
+        .filter((res) => res.status === "fulfilled" && res.value?.id != null)
         .map((res) => res.value);
-      console.log(movieDetails);
       if (movieDetails.length > 0) {
         setMovies(movieDetails);
       }
@@ -202,6 +324,8 @@ function MovieList({ list }) {
                 ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
                 : ""
             }
+            height={"h-48"}
+            width={"h-36"}
             alt={movie.title}
           />
         ))}
@@ -210,20 +334,20 @@ function MovieList({ list }) {
   );
 }
 
-function MovieTile({ url, alt }) {
+function MovieTile({ url, alt, height, width }) {
   if (!url)
     return (
-      <div className="rounded-box skeleton flex h-44 w-28 items-center justify-center">
+      <div
+        className={`rounded-box skeleton flex ${height} ${width} items-center justify-center`}
+      >
         No Image
       </div>
     );
   return (
-    <div className="rounded-box h-44 w-28 flex-shrink-0">
-      <img
-        className="rounded-box skeleton h-44 w-28 object-cover"
-        src={url}
-        alt={alt}
-      />
-    </div>
+    <img
+      className={`rounded-box skeleton flex-shrink-0 ${height} ${width} object-cover`}
+      src={url}
+      alt={alt}
+    />
   );
 }
