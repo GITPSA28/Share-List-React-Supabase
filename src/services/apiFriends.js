@@ -1,8 +1,7 @@
 import { getCurrentUser } from "./apiAuth";
 import supabase from "./supabase";
 
-export async function sendFriendRequest(friend_id) {
-  const { id: user_id } = await getCurrentUser();
+export async function sendFriendRequest(user_id, friend_id) {
   const { data, error } = await supabase
     .from("friends")
     .insert([{ user_id, friend_id }])
@@ -10,8 +9,7 @@ export async function sendFriendRequest(friend_id) {
   if (error) throw error;
   return data[0];
 }
-export async function getFriendStatus({ friend_id }) {
-  const { id: user_id } = await getCurrentUser();
+export async function getFriendStatus(user_id, friend_id) {
   const { data, error } = await supabase
     .from("friends")
     .select("*")
@@ -23,8 +21,7 @@ export async function getFriendStatus({ friend_id }) {
   return data[0];
 }
 
-export async function acceptFriendRequest(friend_id) {
-  const { id: user_id } = await getCurrentUser();
+export async function acceptFriendRequest(user_id, friend_id) {
   const { data, error } = await supabase
     .from("friends")
     .update({ status: "accepted" })
@@ -36,8 +33,7 @@ export async function acceptFriendRequest(friend_id) {
   return data[0];
 }
 
-export async function rejectFriendRequest(friend_id) {
-  const { id: user_id } = await getCurrentUser();
+export async function rejectFriendRequest(user_id, friend_id) {
   const { data, error } = await supabase
     .from("friends")
     .delete()
@@ -48,8 +44,7 @@ export async function rejectFriendRequest(friend_id) {
   return data;
 }
 
-export async function getFriendsDetails(status) {
-  const { id: user_id } = await getCurrentUser();
+export async function getFriendsDetails(user_id, status) {
   const { data, error } = await supabase
     .from("friends")
     .select(
@@ -73,10 +68,6 @@ export async function getFriendsDetails(status) {
 
   if (error) throw error;
   console.log(data);
-  if (!data.length) return null;
-  const friends = data.map((res) => {
-    if (res.user_id === user_id) return res.friend;
-    return res.user;
-  });
-  return friends;
+  if (!data.length) return [];
+  return data;
 }

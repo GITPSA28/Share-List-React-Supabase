@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import SearchBar from "../ui/SearchBar";
 import { searchUsers } from "../services/apiProfile";
-import { Link } from "react-router";
 import { getFriendsDetails } from "../services/apiFriends";
 import { useUser } from "../features/authentication/useUser";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import Spinner from "../ui/Spinner";
+import UserItem from "../ui/UserItem";
+import { useFriends } from "../features/friends/useFriends";
+import { useSession } from "../contexts/SessionContext";
 
 export default function Friends() {
   const [curTab, setTab] = useState(0);
-  const { user, isLoading } = useUser();
-  console.log("0000000000", user);
+  const {
+    session: { user },
+    isLoading,
+  } = useSession();
   if (isLoading || !user) return <FullscreenSpinner />;
   return (
     <div className="bg-base-100 flex min-h-svh flex-col items-center pt-10">
@@ -32,50 +36,28 @@ export default function Friends() {
       </div>
 
       <div className="max-w-xl min-w-72 pt-3 sm:min-w-sm">
-        {curTab === 0 && <MyFriends user_id={user.id} />}
-        {curTab === 1 && <AddFriends />}
+        <MyFriends user_id={user.id} className={curTab != 0 ? "hidden" : ""} />
+        <AddFriends className={curTab != 1 ? "hidden" : ""} />
       </div>
     </div>
   );
 }
 
-function MyFriends({ user_id }) {
-  const [friends, setFriends] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    async function getFriends() {
-      setIsLoading(true);
-      if (!user_id) {
-        setIsLoading(false);
-        return;
-      }
-      try {
-        console.log(user_id);
-        const res = await getFriendsDetails("accepted");
-        setFriends(res);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    getFriends();
-  }, [user_id]);
-  console.log(friends);
+function MyFriends({ user_id, className }) {
+  const { friends, isLoading } = useFriends({ status: "accepted" });
   if (isLoading) return <Spinner />;
-  //   return <></>;
+  if (!friends.length) return <p>No friends</p>;
+  let friendList = friends.map((friendRes) => {
+    if (friendRes.user_id === user_id) return friendRes.friend;
+    else return friendRes.user;
+  });
   return (
-    <ul className="list pt-2">
+    <ul className={`list pt-2 ${className}`}>
       {friends &&
-        friends.map((user) => {
+        friendList.map((user) => {
           return (
             <li key={user.id}>
-              <Link
-                className="bg-base-300 text-base-content rounded-box m-2 flex cursor-pointer gap-4 p-2"
-                to={`/profile/${user.username}`}
-              >
-                <UserItem user={user} />
-              </Link>
+              <UserItem user={user} />
             </li>
           );
         })}
@@ -83,7 +65,7 @@ function MyFriends({ user_id }) {
   );
 }
 
-function AddFriends() {
+function AddFriends({ className }) {
   const [value, setValue] = useState("");
   const [results, setResults] = useState([]);
   async function handleSearch(e) {
@@ -94,7 +76,7 @@ function AddFriends() {
     setResults(res);
   }
   return (
-    <>
+    <div className={className}>
       <form onSubmit={handleSearch}>
         <SearchBar value={value} onChange={(val) => setValue(val)} />
       </form>
@@ -102,69 +84,11 @@ function AddFriends() {
         {results.map((user) => {
           return (
             <li key={user.id}>
-              <Link
-                className="bg-base-300 text-base-content rounded-box m-2 flex cursor-pointer gap-4 p-2"
-                to={`/profile/${user.username}`}
-              >
-                <UserItem user={user} />
-              </Link>
+              <UserItem user={user} />
             </li>
           );
         })}
       </ul>
-    </>
+    </div>
   );
 }
-
-function UserItem({ user }) {
-  return (
-    <>
-      <div className="flex items-center justify-center">
-        {user.avatar_url !== null ? (
-          <div className="avatar">
-            <div className="size-10 rounded-full">
-              <img src={user.avatar_url} />
-            </div>
-          </div>
-        ) : (
-          <div className="avatar avatar-placeholder">
-            <div className="bg-neutral text-neutral-content size-10 rounded-full">
-              <span className="text-xl font-semibold">
-                {user.username.charAt(0).toUpperCase()}
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col justify-center">
-        <div className="font-semibold">{user.full_name}</div>
-        <div className="text-xs lowercase opacity-60">@{user.username}</div>
-      </div>
-    </>
-  );
-}
-
-// <div className="flex">
-//   <div>
-//     {user.avatar_url !== null ? (
-//       <div className="avatar">
-//         <div className="w-16 rounded-full">
-//           <img src={user.avatar_url} />
-//         </div>
-//       </div>
-//     ) : (
-//       <div className="avatar avatar-placeholder">
-//         <div className="bg-neutral text-neutral-content w-16 rounded-full">
-//           <span className="text-4xl font-semibold">
-//             {user.username.charAt(0).toUpperCase()}
-//           </span>
-//         </div>
-//       </div>
-//     )}
-//   </div>
-
-//   <div>
-//     <p className="text-lg">{user.full_name}</p>
-//     <p className="text-base-content">@{user.username}</p>
-//   </div>
-// </div>

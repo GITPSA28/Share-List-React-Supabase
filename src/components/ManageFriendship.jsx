@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useState } from "react";
-import { useFriendship } from "../hooks/useFriendship";
-import { useUser } from "../features/authentication/useUser";
+import { useFriendship } from "../features/friends/useFriendship";
 import {
   acceptFriendRequest,
   rejectFriendRequest,
   sendFriendRequest,
 } from "../services/apiFriends";
+import { useSession } from "../contexts/SessionContext";
 
 const ManageFriendShipContext = createContext();
 
@@ -16,13 +16,17 @@ function ManageFriendship({ friend_id, children }) {
     refetch: refetchFriendship,
     isRefetching,
   } = useFriendship({ friend_id });
-  const { user, isLoading: isUserLoading } = useUser();
+  const {
+    session: {
+      user: { id: user_id },
+    },
+  } = useSession();
   return (
     <ManageFriendShipContext.Provider
       value={{
-        user_id: user.id,
+        user_id: user_id,
         friendship,
-        isFriendshipLoading: isLoading || isUserLoading || isRefetching,
+        isFriendshipLoading: isLoading || isRefetching,
         refetchFriendship,
         friend_id,
       }}
@@ -32,23 +36,21 @@ function ManageFriendship({ friend_id, children }) {
   );
 }
 function AddFriend({ children, className = null }) {
-  const { friend_id, user_id, friendship, isLoading, refetchFriendship } =
-    useContext(ManageFriendShipContext);
-  console.log(
-    friendship,
-    user_id,
+  const {
     friend_id,
-    isLoading,
-    "sdsfsf",
-    !friendship && friend_id != user_id,
-  );
+    user_id,
+    friendship,
+    isFriendshipLoading: isLoading,
+    refetchFriendship,
+  } = useContext(ManageFriendShipContext);
+  const isVisible = !friendship && friend_id != user_id;
+  if (!isVisible) return null;
   return (
     <ManageFriendRequestButton
       onStatusChange={refetchFriendship}
       friend_id={friend_id}
       className={className ?? "btn btn-primary btn-sm"}
       isLoading={isLoading}
-      visible={!friendship && friend_id != user_id}
       type={"Request"}
     >
       {children ?? (
@@ -74,19 +76,25 @@ function AddFriend({ children, className = null }) {
   );
 }
 function Accept({ children, className = null }) {
-  const { friend_id, user_id, friendship, isLoading, refetchFriendship } =
-    useContext(ManageFriendShipContext);
+  const {
+    friend_id,
+    user_id,
+    friendship,
+    isFriendshipLoading: isLoading,
+    refetchFriendship,
+  } = useContext(ManageFriendShipContext);
+
+  const isVisible =
+    friend_id != user_id &&
+    friendship?.status === "requested" &&
+    friendship?.friend_id === user_id;
+  if (!isVisible) return null;
   return (
     <ManageFriendRequestButton
       onStatusChange={refetchFriendship}
       friend_id={friend_id}
       className={className ?? "btn btn-success btn-sm"}
       isLoading={isLoading}
-      visible={
-        friend_id != user_id &&
-        friendship?.status === "requested" &&
-        friendship?.friend_id === user_id
-      }
       type={"Accept"}
     >
       {children ?? (
@@ -112,21 +120,25 @@ function Accept({ children, className = null }) {
   );
 }
 function CancelRequest({ children, className = null }) {
-  const { friend_id, user_id, friendship, isLoading, refetchFriendship } =
-    useContext(ManageFriendShipContext);
-
+  const {
+    friend_id,
+    user_id,
+    friendship,
+    isFriendshipLoading: isLoading,
+    refetchFriendship,
+  } = useContext(ManageFriendShipContext);
+  const isVisible =
+    friend_id != user_id &&
+    friendship?.status === "requested" &&
+    friendship?.user_id === user_id;
+  if (!isVisible) return null;
   return (
     <ManageFriendRequestButton
-      className={className ?? "btn btn-error btn-sm"}
+      className={className ?? "btn btn-soft btn-error btn-sm"}
       friend_id={friend_id}
       onStatusChange={refetchFriendship}
       isLoading={isLoading}
       type={"Reject"}
-      visible={
-        friend_id != user_id &&
-        friendship?.status === "requested" &&
-        friendship?.user_id === user_id
-      }
     >
       {children ?? (
         <>
@@ -151,20 +163,25 @@ function CancelRequest({ children, className = null }) {
   );
 }
 function Reject({ children, className = null }) {
-  const { friend_id, user_id, friendship, isLoading, refetchFriendship } =
-    useContext(ManageFriendShipContext);
+  const {
+    friend_id,
+    user_id,
+    friendship,
+    isFriendshipLoading: isLoading,
+    refetchFriendship,
+  } = useContext(ManageFriendShipContext);
+  const isVisible =
+    friend_id != user_id &&
+    friendship?.status === "requested" &&
+    friendship?.friend_id === user_id;
+  if (!isVisible) return null;
   return (
     <ManageFriendRequestButton
-      className={className ?? "btn btn-error btn-sm"}
+      className={className ?? "btn-soft btn btn-error btn-sm"}
       friend_id={friend_id}
       onStatusChange={refetchFriendship}
       isLoading={isLoading}
       type={"Reject"}
-      visible={
-        friend_id != user_id &&
-        friendship?.status === "requested" &&
-        friendship?.friend_id === user_id
-      }
     >
       {children ?? (
         <>
@@ -195,23 +212,27 @@ function ManageFriendRequestButton({
   type,
   children,
   isLoading,
-  visible,
 }) {
   const [isUpdating, setIsUpdating] = useState(false);
-
-  async function handleFriendRequestUpdate() {
+  const {
+    session: {
+      user: { id: user_id },
+    },
+  } = useSession();
+  async function handleFriendRequestUpdate(e) {
+    e.preventDefault();
     try {
       let res;
       setIsUpdating(true);
       switch (type) {
         case "Request":
-          res = await sendFriendRequest(friend_id);
+          res = await sendFriendRequest(user_id, friend_id);
           break;
         case "Reject":
-          res = await rejectFriendRequest(friend_id);
+          res = await rejectFriendRequest(user_id, friend_id);
           break;
         case "Accept":
-          res = await acceptFriendRequest(friend_id);
+          res = await acceptFriendRequest(user_id, friend_id);
           break;
         default:
           res = null;
@@ -224,12 +245,12 @@ function ManageFriendRequestButton({
       setIsUpdating(false);
     }
   }
-  console.log(visible, type);
+  // console.log(visible, type);
   return (
     <button
       disabled={isLoading || isUpdating}
       onClick={handleFriendRequestUpdate}
-      className={`${className} ${visible ? "" : "hidden"}`}
+      className={`${className}`}
     >
       {(isLoading || isUpdating) && (
         <span className="loading loading-spinner"></span>

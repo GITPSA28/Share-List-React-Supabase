@@ -3,9 +3,10 @@ import { useUser } from "../features/authentication/useUser";
 import Spinner from "./Spinner";
 import SideBar from "./SideBar";
 import NavBar from "./NavBar";
+import { useSession } from "../contexts/SessionContext";
 
 export default function Drawer({ children }) {
-  const { user, isLoading } = useUser();
+  const { userProfile: user, isLoading } = useSession();
   if (isLoading) return <Spinner />;
   if (!isLoading && user)
     return (

@@ -1,11 +1,11 @@
 import React from "react";
-import Logout from "../features/authentication/Logout";
 import LogoIcon from "./LogoIcon";
 import { Link } from "react-router";
 import ThemeController from "./ThemeController";
 // import SearchBar from "./SearchBar";
 
 export default function NavBar({ user }) {
+  console.log("nav", user);
   return (
     <div className="bg-base-100/90 text-base-content sticky top-0 z-30 flex h-16 w-full [transform:translate3d(0,0,0)] justify-center shadow-xs backdrop-blur transition-shadow duration-100 print:hidden">
       <div className="navbar">
@@ -37,7 +37,7 @@ export default function NavBar({ user }) {
             </div> */}
         </div>
 
-        <div className="flex">
+        <div className="flex gap-2">
           <Link to="/search" className="btn btn-ghost btn-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,8 @@ export default function NavBar({ user }) {
               />{" "}
             </svg>
           </Link>
-          <button className="btn btn-ghost btn-circle">
+
+          <Link to={"/notifications"} className="btn btn-ghost btn-circle">
             <div className="indicator">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -74,8 +75,8 @@ export default function NavBar({ user }) {
               </svg>
               <span className="badge badge-xs badge-primary indicator-item"></span>
             </div>
-          </button>
-          <div className="dropdown dropdown-end">
+          </Link>
+          <div className="dropdown dropdown-end ml-2">
             <div
               tabIndex={0}
               role="button"
@@ -85,7 +86,7 @@ export default function NavBar({ user }) {
                 <img
                   referrerPolicy="no-referrer"
                   alt="Profile Pictures"
-                  src={user?.user_metadata?.avatar_url}
+                  src={user?.avatar_url}
                 />
               </div>
             </div>
@@ -94,10 +95,13 @@ export default function NavBar({ user }) {
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
             >
               <li>
-                <a className="justify-between">
+                <Link
+                  to={`/profile/${user.username}`}
+                  className="justify-between"
+                >
                   Profile
                   <span className="badge">New</span>
-                </a>
+                </Link>
               </li>
               <li>
                 <Link to={"/settings"}>Settings</Link>

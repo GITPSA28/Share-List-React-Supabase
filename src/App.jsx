@@ -11,6 +11,9 @@ import SetUserName from "./pages/SetUserName";
 import SearchPage from "./pages/SearchPage";
 import Friends from "./pages/Friends";
 import Profile from "./pages/Profile";
+import NotificationPage from "./pages/NotificationPage";
+import { SessionProvider } from "./contexts/SessionContext";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -23,29 +26,33 @@ function App() {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <Routes>
-            <Route
-              element={
-                <ProtectedRoute>
-                  <CheckUsername>
-                    <AppLayout />
-                  </CheckUsername>
-                </ProtectedRoute>
-              }
-            >
-              <Route index element={<Navigate replace to="/home" />} />
-              <Route path="home" element={<Test />} />
-              <Route path="search" element={<SearchPage />} />
-              <Route path="friends" element={<Friends />} />
-              <Route path="profile/:username" element={<Profile />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
-            <Route path="login" element={<Login />} />
-            <Route path="setusername" element={<SetUserName />} />
+          <SessionProvider>
+            <Routes>
+              <Route
+                element={
+                  <ProtectedRoute>
+                    <CheckUsername>
+                      <AppLayout />
+                    </CheckUsername>
+                  </ProtectedRoute>
+                }
+              >
+                <Route index element={<Navigate replace to="/home" />} />
+                <Route path="home" element={<Test />} />
+                <Route path="search" element={<SearchPage />} />
+                <Route path="friends" element={<Friends />} />
+                <Route path="notifications" element={<NotificationPage />} />
+                <Route path="profile/:username" element={<Profile />} />
+                <Route path="settings" element={<Settings />} />
+              </Route>
+              <Route path="login" element={<Login />} />
+              <Route path="setusername" element={<SetUserName />} />
 
-            {/* <Route path="*" element={<PageNotFound />} /> */}
-          </Routes>
+              {/* <Route path="*" element={<PageNotFound />} /> */}
+            </Routes>
+          </SessionProvider>
         </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </ThemeProvider>
   );
