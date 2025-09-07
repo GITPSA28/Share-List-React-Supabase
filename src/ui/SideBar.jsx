@@ -5,7 +5,7 @@ import { Link } from "react-router";
 
 export default function SideBar() {
   return (
-    <aside className="bg-base-200 text-base-content min-h-full w-80">
+    <aside className="bg-base-200 text-base-content min-h-full w-56">
       <div className="hidden items-center gap-1 p-4 lg:flex">
         <LogoIcon className="fill-base-content h-9 w-9" />
         <a className="text-2xl font-bold">Share List</a>

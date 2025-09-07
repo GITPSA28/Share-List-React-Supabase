@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import SearchBar from "../ui/SearchBar";
 import { useSearchParams } from "react-router";
 import { useSearchMovies } from "../features/tmdb/useSearchMovies";
-import Spinner from "../ui/Spinner";
+import FullscreenSpinner from "../ui/FullscreenSpinner";
 import { addToUserList } from "../services/apiUserList";
 
 export default function SearchPage() {
@@ -16,111 +16,227 @@ export default function SearchPage() {
     searchBarRef.current.click();
     searchBarRef.current.focus();
   }, [searchBarRef]);
+
   useEffect(() => {
     setValue(searchParams.get("query") || "");
   }, [searchParams]);
+
   function handleSubmit(e) {
     e.preventDefault();
     setSearchParams({ query: value });
   }
+
   function onValueChange(query) {
     setValue(query);
   }
   return (
-    <div className="bg-base-100 min-h-svh pt-10">
+    <div className="bg-base-100 min-h-svh pt-2 sm:pt-5">
       <div className="flex w-full items-center justify-center">
-        <form onSubmit={handleSubmit} className="w-full max-w-lg">
-          <SearchBar
-            value={value}
-            ref={searchBarRef}
-            onChange={onValueChange}
-          />
+        <form onSubmit={handleSubmit} className="w-full max-w-xl">
+          <div className="join join-horizontal w-full">
+            <SearchBar
+              value={value}
+              ref={searchBarRef}
+              onChange={onValueChange}
+            />
+            {/* <select className="select select-ghost join-item w-fit">
+              <option selected>Movie</option>
+              <option disabled>TV</option>
+            </select> */}
+            <button type="submit" className="btn join-item">
+              Search
+            </button>
+          </div>
         </form>
       </div>
       <div>
-        {isLoading && <Spinner />}
-        {!isLoading && movieResults?.results?.length > 0 && (
-          <div className="flex items-center justify-center">
-            <MovieSearchResults
-              className="max-w-2xl"
-              movieList={movieResults.results}
-            />
-          </div>
-        )}
+        {isLoading && <FullscreenSpinner />}
+        <div className="flex items-center justify-center">
+          {!isLoading && movieResults?.results?.length > 0 && (
+            <MovieSearchResults className="" movieList={movieResults.results} />
+          )}
+          {!isLoading && movieResults?.results?.length === 0 && (
+            <p className="pt-10">No results</p>
+          )}
+        </div>
       </div>
     </div>
   );
 }
+
 function MovieSearchResults({ movieList, className }) {
   return (
-    <ul className={`list bg-base-100 ` + className}>
+    <ul
+      className={
+        `bg-base-100 mt-3 flex flex-wrap justify-center gap-3 ` + className
+      }
+    >
       {movieList.map((movie) => (
-        <li className="list-row my-2 items-center" key={movie.id}>
-          <div className="flex items-center justify-center">
-            {/* <img
-                className="rounded-box absolute w-18 opacity-80 blur"
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              /> */}
-            <img
-              className="z-10 w-20 rounded-sm sm:w-28"
-              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-            />
-          </div>
-          <div className="flex justify-between">
-            <div>
-              <div className="text-sm font-semibold uppercase opacity-60">
-                {movie.title}
-              </div>
-              <div className="text-xs font-normal opacity-60">
-                {movie.release_date}
-              </div>
-              <div className="text-xs font-normal opacity-60">
-                {movie.overview.substring(0, 130) + "..."}
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                {Math.round(movie.vote_average * 5) / 10}
-                <Rating value={movie.vote_average} />
-              </div>
-            </div>
-            <div className="flex flex-col items-center justify-end sm:flex-row">
-              <AddToFav movie_id={movie.id} />
-              <button className="btn btn-square btn-ghost">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-[1.2em]"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                  />
-                </svg>
-              </button>
-              <button className="btn btn-square btn-ghost">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-[1.2em]"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-                  />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </li>
+        <Fragment key={movie.id}>
+          <ResultCard movie={movie} />
+        </Fragment>
       ))}
     </ul>
+  );
+}
+
+function ResultCard({ movie }) {
+  const [overview, setOverview] = useState(
+    () => `${movie.overview?.substring(0, 60)}...`,
+  );
+
+  return (
+    <div
+      className={`card ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : "bg-base-100"} image-full w-full shadow-sm sm:w-2xs xl:w-md`}
+    >
+      <figure className="">
+        {movie.backdrop_path && (
+          <img
+            className="object-cover sm:w-2xs xl:w-md"
+            src={`https://image.tmdb.org/t/p/w780${movie.backdrop_path}`}
+            alt="Shoes"
+          />
+        )}
+      </figure>
+      <div className="card-body">
+        {movie.poster_path && (
+          <img
+            className="z-10 w-20 rounded-sm sm:w-28"
+            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+          />
+        )}
+        <div className="card-title items-end gap-1 text-lg font-bold">
+          <p className="wrap-anywhere">
+            {movie.title + " "}
+            <span className="font-mono text-xs opacity-70">
+              {movie.release_date?.split("-")[0]}
+            </span>
+          </p>
+        </div>
+
+        <p
+          tabIndex={0}
+          role="button"
+          onClick={() => {
+            setOverview(movie.overview);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") setOverview(movie.overview);
+          }}
+        >
+          {overview}
+        </p>
+
+        <div className="card-actions justify-end">
+          <button className="btn btn-sm btn-ghost">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-info-icon lucide-info"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4" />
+              <path d="M12 8h.01" />
+            </svg>
+            Details
+          </button>
+          <button className="btn btn-sm btn-primary">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className=""
+            >
+              <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+              <path d="m21.854 2.147-10.94 10.939" />
+            </svg>
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ListItem(movie) {
+  return (
+    <li className="list-row my-2 items-center" key={movie.id}>
+      <div className="flex items-center justify-center">
+        {/* <img
+          className="rounded-box absolute w-18 opacity-80 blur"
+          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        /> */}
+        <img
+          className="z-10 w-20 rounded-sm sm:w-28"
+          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+        />
+      </div>
+      <div className="flex justify-between">
+        <div>
+          <div className="text-sm font-semibold uppercase opacity-60">
+            {movie.title}
+          </div>
+          <div className="text-xs font-normal opacity-60">
+            {movie.release_date}
+          </div>
+          <div className="text-xs font-normal opacity-60">
+            {movie.overview.substring(0, 130) + "..."}
+          </div>
+          <div className="flex items-center gap-2 text-sm">
+            {Math.round(movie.vote_average * 5) / 10}
+            <Rating value={movie.vote_average} />
+          </div>
+        </div>
+        <div className="flex flex-col items-center justify-end sm:flex-row">
+          <AddToFav movie_id={movie.id} />
+          <button className="btn btn-square btn-ghost">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-[1.2em]"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+              />
+            </svg>
+          </button>
+          <button className="btn btn-square btn-ghost">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-[1.2em]"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </li>
   );
 }
 

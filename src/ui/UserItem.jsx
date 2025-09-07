@@ -1,8 +1,11 @@
 import { Link } from "react-router";
 
-export default function UserItem({ user, children }) {
+export default function UserItem({ user, children, className }) {
   return (
-    <Link to={`/profile/${user.username}`} className="list-row">
+    <Link
+      to={`/profile/${user.username}`}
+      className={`list-row after:border-base-content after:opacity-5 sm:after:opacity-100 ${className}`}
+    >
       {user.avatar_url !== null ? (
         <div className="avatar">
           <div className="size-10 rounded-full">

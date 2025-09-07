@@ -2,7 +2,7 @@ import React from "react";
 
 export default function SearchBar({ value, onChange, ref = null }) {
   return (
-    <label className="input w-full">
+    <label className="input join-item w-full">
       <svg
         className="h-[1em] opacity-50"
         xmlns="http://www.w3.org/2000/svg"

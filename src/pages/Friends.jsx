@@ -46,21 +46,24 @@ export default function Friends() {
 function MyFriends({ user_id, className }) {
   const { friends, isLoading } = useFriends({ status: "accepted" });
   if (isLoading) return <Spinner />;
-  if (!friends.length) return <p>No friends</p>;
+  // if (!friends.length) return ;
   let friendList = friends.map((friendRes) => {
     if (friendRes.user_id === user_id) return friendRes.friend;
     else return friendRes.user;
   });
   return (
     <ul className={`list pt-2 ${className}`}>
-      {friends &&
+      {friends.length > 0 ? (
         friendList.map((user) => {
           return (
             <li key={user.id}>
-              <UserItem user={user} />
+              <UserItem className={"p-2"} user={user} />
             </li>
           );
-        })}
+        })
+      ) : (
+        <p className="w-full text-center">No friends</p>
+      )}
     </ul>
   );
 }
@@ -76,15 +79,15 @@ function AddFriends({ className }) {
     setResults(res);
   }
   return (
-    <div className={className}>
-      <form onSubmit={handleSearch}>
+    <div className={`w-full ${className}`}>
+      <form className="w-full" onSubmit={handleSearch}>
         <SearchBar value={value} onChange={(val) => setValue(val)} />
       </form>
       <ul className="list pt-2">
         {results.map((user) => {
           return (
             <li key={user.id}>
-              <UserItem user={user} />
+              <UserItem className={"p-2"} user={user} />
             </li>
           );
         })}

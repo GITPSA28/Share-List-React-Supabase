@@ -12,7 +12,7 @@ export default function NavBar({ user }) {
         <div className="flex flex-1 items-center justify-start gap-1">
           <label
             htmlFor="my-drawer-2"
-            className="btn btn-ghost drawer-button lg:hidden"
+            className="btn btn-ghost drawer-button btn-sm sm:btn-md lg:hidden"
           >
             <svg
               width="20"
@@ -30,15 +30,18 @@ export default function NavBar({ user }) {
               ></path>
             </svg>
           </label>
-          <LogoIcon className="fill-base-content h-9 w-9 lg:hidden" />
-          <a className="text-2xl font-bold lg:hidden">Share List</a>
+          <LogoIcon className="fill-base-content h-6 w-6 sm:h-9 sm:w-9 lg:hidden" />
+          <a className="text-lg font-bold sm:text-2xl lg:hidden">Share List</a>
           {/* <div className="hidden lg:block">
               <SearchBar />
             </div> */}
         </div>
 
-        <div className="flex gap-2">
-          <Link to="/search" className="btn btn-ghost btn-circle">
+        <div className="flex gap-1 sm:gap-2">
+          <Link
+            to="/search"
+            className="btn btn-sm sm:btn-md btn-ghost btn-circle"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -56,7 +59,10 @@ export default function NavBar({ user }) {
             </svg>
           </Link>
 
-          <Link to={"/notifications"} className="btn btn-ghost btn-circle">
+          <Link
+            to={"/notifications"}
+            className="btn-sm sm:btn-md btn btn-ghost btn-circle"
+          >
             <div className="indicator">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -80,7 +86,7 @@ export default function NavBar({ user }) {
             <div
               tabIndex={0}
               role="button"
-              className="btn btn-ghost btn-circle avatar"
+              className="btn btn-sm sm:btn-md btn-ghost btn-circle avatar"
             >
               <div className="w-10 rounded-full">
                 <img
