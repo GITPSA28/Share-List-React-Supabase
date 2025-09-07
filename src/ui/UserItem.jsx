@@ -4,7 +4,7 @@ export default function UserItem({ user, children, className }) {
   return (
     <Link
       to={`/profile/${user.username}`}
-      className={`list-row after:border-base-content after:opacity-5 sm:after:opacity-100 ${className}`}
+      className={`list-row ${className || ""}`}
     >
       {user.avatar_url !== null ? (
         <div className="avatar">

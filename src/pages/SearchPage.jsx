@@ -82,7 +82,8 @@ function MovieSearchResults({ movieList, className }) {
 
 function ResultCard({ movie }) {
   const [overview, setOverview] = useState(
-    () => `${movie.overview?.substring(0, 60)}...`,
+    () =>
+      `${movie.overview?.substring(0, 60)}${movie.overview?.length > 60 ? "..." : ""}`,
   );
 
   return (

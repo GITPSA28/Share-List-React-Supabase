@@ -2,3 +2,14 @@
 @plugin "daisyui" {
   themes: all;
 }
+.list {
+  > :not(:last-child) {
+    &.list-row,
+    .list-row {
+      &:after {
+        border-color: var(--color-base-content);
+        opacity: 5%;
+      }
+    }
+  }
+}
