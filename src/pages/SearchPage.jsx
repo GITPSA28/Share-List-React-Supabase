@@ -5,6 +5,7 @@ import { useSearchMovies } from "../features/tmdb/useSearchMovies";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import { addToUserList } from "../services/apiUserList";
 import SendMovie from "../components/SendMovie";
+import MovieCard from "../ui/MovieCard";
 
 export default function SearchPage() {
   const { isLoading, movieResults } = useSearchMovies();
@@ -85,77 +86,29 @@ function MovieSearchResults({ movieList, className }) {
 }
 
 function ResultCard({ movie }) {
-  const [overview, setOverview] = useState(
-    () =>
-      `${movie.overview?.substring(0, 60)}${movie.overview?.length > 60 ? "..." : ""}`,
-  );
-
   return (
-    <div
-      className={`card ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : "bg-base-100"} image-full w-full shadow-sm sm:w-2xs xl:w-md`}
-    >
-      <figure className="">
-        {movie.backdrop_path && (
-          <img
-            className="object-cover sm:w-2xs xl:w-md"
-            src={`https://image.tmdb.org/t/p/w780${movie.backdrop_path}`}
-            alt="Shoes"
-          />
-        )}
-      </figure>
-      <div className="card-body">
-        {movie.poster_path && (
-          <img
-            className="z-10 w-20 rounded-sm sm:w-28"
-            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          />
-        )}
-        <div className="card-title items-end gap-1 text-lg font-bold">
-          <p className="wrap-anywhere">
-            {movie.title + " "}
-            <span className="font-mono text-xs opacity-70">
-              {movie.release_date?.split("-")[0]}
-            </span>
-          </p>
-        </div>
-
-        <p
-          tabIndex={0}
-          role="button"
-          onClick={() => {
-            setOverview(movie.overview);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") setOverview(movie.overview);
-          }}
+    <MovieCard movie={movie}>
+      <button className="btn btn-sm btn-ghost">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="lucide lucide-info-icon lucide-info"
         >
-          {overview}
-        </p>
-
-        <div className="card-actions justify-end">
-          <button className="btn btn-sm btn-ghost">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="lucide lucide-info-icon lucide-info"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <path d="M12 16v-4" />
-              <path d="M12 8h.01" />
-            </svg>
-            Details
-          </button>
-          <SendMovie movie={movie} />
-        </div>
-      </div>
-    </div>
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 16v-4" />
+          <path d="M12 8h.01" />
+        </svg>
+        Details
+      </button>
+      <SendMovie movie={movie} />
+    </MovieCard>
   );
 }
 

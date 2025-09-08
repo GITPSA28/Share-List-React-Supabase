@@ -79,7 +79,7 @@ export default async function getListIdsOfFriendIds({ owner_id, friendIds }) {
     .from("lists")
     .select("list_id")
     .eq("owner_id", owner_id)
-    .in("recomended_to", [friendIds]);
+    .in("recommended_to", [friendIds]);
   if (error) throw error;
   return data;
 }

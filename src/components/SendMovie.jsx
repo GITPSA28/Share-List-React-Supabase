@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 
 import Modal from "../ui/Modal";
-import { useFriends } from "../features/friends/useFriends";
 import Avatar from "../ui/Avatar";
 import useFriendList from "../features/friends/useFriendList";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
-import getListIdsOfFriendIds from "../services/apiFriends";
 import { useSession } from "../contexts/SessionContext";
 import { useSendItemsToFriends } from "../features/friends/useSendItemsToFreinds";
 

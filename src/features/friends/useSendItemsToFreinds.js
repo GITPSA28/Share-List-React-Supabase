@@ -1,5 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateUserProfile } from "../../services/apiProfile";
+import { useMutation } from "@tanstack/react-query";
 import getListIdsOfFriendIds from "../../services/apiFriends";
 import { useSession } from "../../contexts/SessionContext";
 import { insertItemsFromListIds } from "../../services/apiUserList";
@@ -23,7 +22,6 @@ export function useSendItemsToFriends() {
     },
     onSuccess: ({ data }) => {
       alert("Sent Succesfully");
-      //   queryClient.setQueryData(["user-profile"], data);
     },
     onError: (error) => {
       if (error.code === "23505") {

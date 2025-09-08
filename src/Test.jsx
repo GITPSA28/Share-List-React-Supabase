@@ -2,35 +2,64 @@ import { useState, useEffect } from "react";
 import supabase from "./services/supabase.js";
 import { useUser } from "./features/authentication/useUser.js";
 import Logout from "./features/authentication/Logout.jsx";
+import MovieCard from "./ui/MovieCard.jsx";
+import { useSession } from "./contexts/SessionContext.jsx";
 
 function Test() {
   const [lists, setLists] = useState([]);
-  const { isLoading, user, isAuthenticated } = useUser();
+  const {
+    session: { user },
+  } = useSession();
 
   useEffect(() => {
     async function getMovies() {
-      let { data: listsResult, error } = await supabase
+      // let { data: listsResult, error } = await supabase
+      //   .from("lists")
+      //   .select(`*,items (*)`)
+      //   .eq("items.type", "movie")
+      //   .or(
+      //     `and(owner_id.eq.${user.id},recommended_to.is.null),recommended_to.eq.${user.id}`,
+      //   );
+      // `user.id` is the authenticated user’s UUID
+      const { data: listsResult, error } = await supabase
         .from("lists")
-        .select(`*,items (*)`)
-        .eq("owner_id", user.id)
-        .eq("items.type", "movie");
+        .select(
+          `
+        *,
+        items(*),
+        owner_profile:profiles!lists_owner_id_fkey1(*)
+      `,
+        )
+        .eq("items.type", "movie")
+        .or(
+          `and(owner_id.eq.${user.id},recommended_to.is.null),recommended_to.eq.${user.id}`,
+        )
+        .order("created_at", { ascending: false })
+        .order("created_at", { foreignTable: "items", ascending: false });
       if (error) throw error;
+      // let filteredList = listsResult
+      //   .filter((list) => list.items.length > 0)
+      //   .sort(
+      //     (a, b) =>
+      //       new Date(b.items[0].created_at).getTime -
+      //       new Date(a.items[0].created_at).getTime,
+      //   );
+      console.log(listsResult);
       setLists(listsResult);
     }
 
     getMovies();
   }, []);
 
-  console.log("lists", lists);
-  if (isLoading) return <div>Loading..</div>;
-  if (!isLoading && !isAuthenticated) return <div>No Access</div>;
+  // if (isLoading) return <div>Loading..</div>;
+  // if (!isLoading && !isAuthenticated) return <div>No Access</div>;
 
   return (
     <div className="bg-base-100">
-      <h1>welcome {user?.user_metadata?.name}</h1>
-      <Logout />
-      {lists.length > 0 &&
-        lists.map((list) => <MovieList list={list} key={list.id} />)}
+      <div className="flex flex-col gap-10">
+        {lists.length > 0 &&
+          lists.map((list) => <MovieList list={list} key={list.id} />)}
+      </div>
     </div>
   );
 }
@@ -137,7 +166,6 @@ function Rating({ value }) {
 function MovieList({ list }) {
   const [movies, setMovies] = useState([]);
   const { items } = list;
-  console.log(list);
   useEffect(() => {
     async function getMovies() {
       let movieDetailsReq = items.map(async (movie) => {
@@ -150,79 +178,100 @@ function MovieList({ list }) {
       let movieDetails = movieDetailsRes
         .filter((res) => res.status === "fulfilled")
         .map((res) => res.value);
-      console.log(movieDetails);
       if (movieDetails.length > 0) {
         setMovies(movieDetails);
       }
     }
     getMovies();
   }, []);
-  console.log(movies);
   if (!movies.length) return;
   return (
-    <>
-      <ul className="list bg-base-100 rounded-box shadow-md">
-        <li className="p-4 pb-2 text-xs tracking-wide opacity-60">
-          {list.list_name}
-        </li>
+    <div>
+      <h2 className="font-bold tracking-wide uppercase">
+        {`${list?.owner_profile?.username}'s `}
+        {list.list_name}
+      </h2>
+      <ul className={`bg-base-100 mt-3 flex flex-wrap justify-start gap-3`}>
         {movies.map((movie) => (
-          <li className="list-row my-2 items-center" key={movie.id}>
-            <div className="flex items-center justify-center">
-              {/* <img
-                className="rounded-box absolute w-18 opacity-80 blur"
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              /> */}
-              <img
-                className="rounded-box z-10 w-16"
-                src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              />
-            </div>
-            <div>
-              <div className="text-xs font-semibold uppercase opacity-60">
-                {movie.title}
-              </div>
-              <div className="flex items-center gap-2 text-base">
-                {Math.round(movie.vote_average * 5) / 10}
-                <Rating value={movie.vote_average} />
-              </div>
-            </div>
-            <button className="btn btn-square btn-ghost">
+          <MovieCard key={movie.id} movie={movie} enableOverView={false}>
+            {/* <button className="btn btn-sm btn-neutral">
               <svg
-                className="size-[1.2em]"
                 xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
                 viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-info-icon lucide-info"
               >
-                <g
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  strokeWidth="2"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <path d="M6 3L20 12 6 21 6 3z"></path>
-                </g>
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <path d="M12 8h.01" />
               </svg>
-            </button>
-            <button className="btn btn-square btn-ghost">
-              <svg
-                className="size-[1.2em]"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-              >
-                <g
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  strokeWidth="2"
-                  fill="currentColor"
-                  stroke="currentColor"
-                >
-                  <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-                </g>
-              </svg>
-            </button>
-          </li>
+              Details
+            </button> */}
+          </MovieCard>
         ))}
       </ul>
-    </>
+    </div>
   );
 }
+
+// <li className="list-row my-2 items-center" key={movie.id}>
+//   <div className="flex items-center justify-center">
+//     {/* <img
+//       className="rounded-box absolute w-18 opacity-80 blur"
+//       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+//     /> */}
+//     <img
+//       className="rounded-box z-10 w-16"
+//       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+//     />
+//   </div>
+//   <div>
+//     <div className="text-xs font-semibold uppercase opacity-60">
+//       {movie.title}
+//     </div>
+//     <div className="flex items-center gap-2 text-base">
+//       {Math.round(movie.vote_average * 5) / 10}
+//       <Rating value={movie.vote_average} />
+//     </div>
+//   </div>
+//   <button className="btn btn-square btn-ghost">
+//     <svg
+//       className="size-[1.2em]"
+//       xmlns="http://www.w3.org/2000/svg"
+//       viewBox="0 0 24 24"
+//     >
+//       <g
+//         strokeLinejoin="round"
+//         strokeLinecap="round"
+//         strokeWidth="2"
+//         fill="none"
+//         stroke="currentColor"
+//       >
+//         <path d="M6 3L20 12 6 21 6 3z"></path>
+//       </g>
+//     </svg>
+//   </button>
+//   <button className="btn btn-square btn-ghost">
+//     <svg
+//       className="size-[1.2em]"
+//       xmlns="http://www.w3.org/2000/svg"
+//       viewBox="0 0 24 24"
+//     >
+//       <g
+//         strokeLinejoin="round"
+//         strokeLinecap="round"
+//         strokeWidth="2"
+//         fill="currentColor"
+//         stroke="currentColor"
+//       >
+//         <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
+//       </g>
+//     </svg>
+//   </button>
+// </li>
