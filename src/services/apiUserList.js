@@ -27,3 +27,18 @@ export async function getUserTableIdByListType(list_type) {
   if (!list_ids.length) return null;
   return list_ids[0]?.list_id;
 }
+
+export async function insertItemsFromListIds({
+  value,
+  type = "movie",
+  listIds,
+}) {
+  console.log(listIds);
+  if (!listIds.length) return;
+  const payload = listIds.map((list_id) => {
+    return { value, type, list_id };
+  });
+  const { data, error } = await supabase.from("items").insert(payload).select();
+  if (error) throw error;
+  return data;
+}

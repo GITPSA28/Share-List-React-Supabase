@@ -71,3 +71,15 @@ export async function getFriendsDetails(user_id, status) {
   if (!data.length) return [];
   return data;
 }
+export default async function getListIdsOfFriendIds({ owner_id, friendIds }) {
+  console.log(friendIds);
+  if (!friendIds.length) return;
+
+  const { data, error } = await supabase
+    .from("lists")
+    .select("list_id")
+    .eq("owner_id", owner_id)
+    .in("recomended_to", [friendIds]);
+  if (error) throw error;
+  return data;
+}

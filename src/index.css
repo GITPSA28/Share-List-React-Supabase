@@ -2,6 +2,12 @@
 @plugin "daisyui" {
   themes: all;
 }
+@plugin "daisyui/theme" {
+  name: "wireframe";
+  default: true;
+  --color-neutral: var(--color-neutral-800);
+  --color-neutral-content: var(--color-neutral-50);
+}
 .list {
   > :not(:last-child) {
     &.list-row,
