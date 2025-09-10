@@ -14,7 +14,7 @@ export default function Avatar({ user, className }) {
           <div
             className={`bg-neutral text-neutral-content ${className || "size-10 rounded-full"}`}
           >
-            <span className="text-xl font-semibold">
+            <span className="font-semibold">
               {user.username.charAt(0).toUpperCase()}
             </span>
           </div>

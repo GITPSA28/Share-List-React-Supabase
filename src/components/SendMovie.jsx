@@ -7,33 +7,43 @@ import FullscreenSpinner from "../ui/FullscreenSpinner";
 import { useSession } from "../contexts/SessionContext";
 import { useSendItemsToFriends } from "../features/friends/useSendItemsToFreinds";
 
-export default function SendMovie({ movie }) {
+export default function SendMovie({ movie, className, children }) {
   return (
     <Modal>
-      <Modal.ModalContent className={"text-base-content bg-base-100/95"}>
+      <Modal.ModalContent className={"text-base-content bg-base-100"}>
         <h3 className="text-lg font-bold">Send {movie.title}</h3>
         <p className="py-4">Select friends</p>
         <SendMovieContent movie={movie} />
       </Modal.ModalContent>
       {/* <> */}
 
-      <Modal.OpenModel className="btn glass text-neutral-content btn-sm">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className=""
-        >
-          <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
-          <path d="m21.854 2.147-10.94 10.939" />
-        </svg>
-        Send
+      <Modal.OpenModel
+        className={
+          className ? className : "btn glass text-neutral-content btn-sm"
+        }
+      >
+        {children ? (
+          children
+        ) : (
+          <>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className=""
+            >
+              <path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z" />
+              <path d="m21.854 2.147-10.94 10.939" />
+            </svg>
+            Send
+          </>
+        )}
       </Modal.OpenModel>
 
       {/* </> */}

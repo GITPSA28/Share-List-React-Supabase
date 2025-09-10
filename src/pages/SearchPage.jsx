@@ -77,9 +77,9 @@ function MovieSearchResults({ movieList, className }) {
       }
     >
       {movieList.map((movie) => (
-        <Fragment key={movie.id}>
+        <div className="w-full max-w-md" key={movie.id}>
           <ResultCard movie={movie} />
-        </Fragment>
+        </div>
       ))}
     </ul>
   );
@@ -101,11 +101,10 @@ function ResultCard({ movie }) {
           strokeLinejoin="round"
           className="lucide lucide-info-icon lucide-info"
         >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 16v-4" />
-          <path d="M12 8h.01" />
+          <path d="M5 12h14" />
+          <path d="M12 5v14" />
         </svg>
-        Details
+        Add
       </button>
       <SendMovie movie={movie} />
     </MovieCard>

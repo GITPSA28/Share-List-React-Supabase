@@ -5,7 +5,6 @@ import ThemeController from "./ThemeController";
 // import SearchBar from "./SearchBar";
 
 export default function NavBar({ user }) {
-  console.log("nav", user);
   return (
     <div className="bg-base-100/90 text-base-content sticky top-0 z-30 flex h-16 w-full [transform:translate3d(0,0,0)] justify-center shadow-xs backdrop-blur transition-shadow duration-100 print:hidden">
       <div className="navbar">

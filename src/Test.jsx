@@ -4,6 +4,8 @@ import { useUser } from "./features/authentication/useUser.js";
 import Logout from "./features/authentication/Logout.jsx";
 import MovieCard from "./ui/MovieCard.jsx";
 import { useSession } from "./contexts/SessionContext.jsx";
+import { Link } from "react-router";
+import Avatar from "./ui/Avatar.jsx";
 
 function Test() {
   const [lists, setLists] = useState([]);
@@ -187,33 +189,38 @@ function MovieList({ list }) {
   if (!movies.length) return;
   return (
     <div>
-      <h2 className="font-bold tracking-wide uppercase">
-        {`${list?.owner_profile?.username}'s `}
-        {list.list_name}
+      <h2 className="flex gap-3 pl-4 font-bold tracking-wide uppercase">
+        <Link
+          className="flex items-center gap-1"
+          to={`/profile/${list?.owner_profile?.username}`}
+        >
+          <Avatar
+            user={list?.owner_profile}
+            className={"size-6 rounded-full"}
+          />
+          {`${list?.owner_profile?.username}'s `}
+        </Link>
+
+        <em>
+          <Link
+            className="link-hover text-sm opacity-70"
+            to={`/list/${list.list_id}`}
+          >
+            {list.list_name}
+          </Link>
+        </em>
       </h2>
-      <ul className={`bg-base-100 mt-3 flex flex-wrap justify-start gap-3`}>
+      <ul
+        className={`bg-base-100 no-scrollbar mt-3 flex justify-start gap-3 overflow-x-auto pl-4`}
+      >
         {movies.map((movie) => (
-          <MovieCard key={movie.id} movie={movie} enableOverView={false}>
-            {/* <button className="btn btn-sm btn-neutral">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-info-icon lucide-info"
-              >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 16v-4" />
-                <path d="M12 8h.01" />
-              </svg>
-              Details
-            </button> */}
-          </MovieCard>
+          <div className="w-96 shrink-0">
+            <MovieCard
+              key={movie.id}
+              movie={movie}
+              enableOverView={false}
+            ></MovieCard>
+          </div>
         ))}
       </ul>
     </div>

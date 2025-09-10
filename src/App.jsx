@@ -14,6 +14,8 @@ import Profile from "./pages/Profile";
 import NotificationPage from "./pages/NotificationPage";
 import { SessionProvider } from "./contexts/SessionContext";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import ListPage from "./pages/ListPage";
+import MoviePage from "./pages/MoviePage";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -43,6 +45,8 @@ function App() {
                 <Route path="friends" element={<Friends />} />
                 <Route path="notifications" element={<NotificationPage />} />
                 <Route path="profile/:username" element={<Profile />} />
+                <Route path="list/:listid" element={<ListPage />} />
+                <Route path="movie/:movieid" element={<MoviePage />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
               <Route path="login" element={<Login />} />

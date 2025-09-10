@@ -42,3 +42,23 @@ export async function insertItemsFromListIds({
   if (error) throw error;
   return data;
 }
+
+export async function getListById({ list_id }) {
+  if (!list_id) return;
+  const { data, error } = await supabase
+    .from("lists")
+    .select(
+      `*,items(*),owner_profile:profiles!lists_owner_id_fkey1(
+        id,
+        username,
+        full_name,
+        avatar_url
+      )`,
+    )
+    .eq("list_id", list_id);
+  if (error) throw error;
+  if (data.length < 1) return [];
+  return data[0];
+}
+
+//lists_owner_id_fkey1

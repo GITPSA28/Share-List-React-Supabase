@@ -99,7 +99,8 @@ function AllLists({ owner_id }) {
       let { data: listsResult, error } = await supabase
         .from("lists")
         .select(`*,items (*)`)
-        .eq("owner_id", owner_id);
+        .eq("owner_id", owner_id)
+        .is("recommended_to", null);
       if (error) throw error;
       setLists(listsResult);
     }

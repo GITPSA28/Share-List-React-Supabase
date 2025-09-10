@@ -25,3 +25,55 @@ export async function searchMovies({ query, page = 1, adult = false }) {
   let data = await res.json();
   return data;
 }
+
+export async function getMovieDetails({ movie_id }) {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/${movie_id}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+    );
+    if (!res.ok) throw new Error(res.message);
+    const data = res.json();
+    return data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
+export async function getMovieWatchProviders({ movie_id }) {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/${movie_id}/watch/providers?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+    );
+    if (!res.ok) throw new Error(res.message);
+    const data = res.json();
+    return data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
+export async function getMovieCredits({ movie_id }) {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/movie/${movie_id}/credits?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+    );
+    if (!res.ok) throw new Error(res.message);
+    const data = res.json();
+    return data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
+async function getMovies() {
+  let movieDetailsReq = items.map(async (movie) => {
+    let res = await fetch(
+      `https://api.themoviedb.org/3/movie/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+    );
+    return res.json();
+  });
+  let movieDetailsRes = await Promise.allSettled(movieDetailsReq);
+  let movieDetails = movieDetailsRes
+    .filter((res) => res.status === "fulfilled")
+    .map((res) => res.value);
+  if (movieDetails.length > 0) {
+    setMovies(movieDetails);
+  }
+}
