@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 import useLocalStorage from "../hooks/useLocalStorage";
 
 const ThemeContext = createContext(null);
@@ -9,6 +9,9 @@ function ThemeProvider({ children }) {
   function handleThemeChange(value) {
     setTheme(value);
   }
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
   return (
     <ThemeContext value={{ theme, handleThemeChange }}>{children}</ThemeContext>
   );
