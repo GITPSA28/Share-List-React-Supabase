@@ -30,7 +30,6 @@ export default function MovieCard({ movie, children, enableOverView = true }) {
         <div className="card-title items-end gap-1 text-lg font-bold">
           <p className="wrap-anywhere">
             <Link
-              viewTransition
               className="cursor-pointer hover:text-[#40BCF4]"
               to={`/movie/${movie.id}`}
             >
