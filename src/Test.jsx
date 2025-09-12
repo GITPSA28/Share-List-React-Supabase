@@ -218,7 +218,7 @@ function MovieList({ list }) {
             <MovieCard
               key={movie.id}
               movie={movie}
-              enableOverView={false}
+              showOverView={false}
             ></MovieCard>
           </div>
         ))}

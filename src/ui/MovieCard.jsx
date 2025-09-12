@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
 
-export default function MovieCard({ movie, children, enableOverView = true }) {
+export default function MovieCard({ movie, children, showOverView = true }) {
   const [overview, setOverview] = useState(
     () =>
       `${movie.overview?.substring(0, 60)}${movie.overview?.length > 60 ? "..." : ""}`,
@@ -41,7 +41,7 @@ export default function MovieCard({ movie, children, enableOverView = true }) {
           </p>
         </div>
 
-        {enableOverView && (
+        {showOverView && (
           <p
             tabIndex={0}
             role="button"

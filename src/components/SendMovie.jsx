@@ -6,6 +6,7 @@ import useFriendList from "../features/friends/useFriendList";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import { useSession } from "../contexts/SessionContext";
 import { useSendItemsToFriends } from "../features/friends/useSendItemsToFreinds";
+import Spinner from "../ui/Spinner";
 
 export default function SendMovie({ movie, className, children }) {
   return (
@@ -85,7 +86,7 @@ function SelectFriends({ movie, friendList, isLoading }) {
       },
     );
   }
-  if (isLoading) return <FullscreenSpinner />;
+  if (isLoading) return <Spinner />;
   if (!friendList && !isLoading) return <p>No friends</p>;
   return (
     <>

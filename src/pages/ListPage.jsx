@@ -66,7 +66,7 @@ function MovieList({ list }) {
       <ul className={`bg-base-100 mt-3 flex flex-wrap justify-start gap-3`}>
         {movies.map((movie) => (
           <div className="max-w-sm" key={movie.id}>
-            <MovieCard movie={movie} enableOverView={false}></MovieCard>
+            <MovieCard movie={movie} showOverView={false}></MovieCard>
           </div>
         ))}
       </ul>
