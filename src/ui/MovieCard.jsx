@@ -9,7 +9,7 @@ export default function MovieCard({ movie, children, showOverView = true }) {
 
   return (
     <div
-      className={`card ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : "bg-base-100"} image-full w-full shadow-sm`}
+      className={`card ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : "bg-base-100"} image-full h-full w-full shadow-sm`}
     >
       <figure className="">
         {movie.backdrop_path && (
