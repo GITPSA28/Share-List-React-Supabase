@@ -1,7 +1,7 @@
 import React from "react";
 import LogoIcon from "./LogoIcon";
 import SearchBar from "./SearchBar";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 
 export default function SideBar() {
   return (
@@ -20,10 +20,15 @@ export default function SideBar() {
 }
 
 function SideBarLinks() {
+  const location = useLocation();
+  const currentPath = location.pathname;
   return (
     <ul className="menu w-full p-4">
       <li>
-        <Link to="/home" className="menu-active">
+        <Link
+          to="/home"
+          className={currentPath === "/home" ? "menu-active" : ""}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -42,7 +47,10 @@ function SideBarLinks() {
         </Link>
       </li>
       <li>
-        <Link to="/friends">
+        <Link
+          to="/friends"
+          className={currentPath === "/friends" ? "menu-active" : ""}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
