@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import {
   getMovieCredits,
@@ -9,6 +9,11 @@ import {
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import SendMovie from "../components/SendMovie";
 import Spinner from "../ui/Spinner";
+import {
+  addToUserList,
+  deleteItemFromUserList,
+  getUserListsByItem,
+} from "../services/apiUserList";
 
 export default function MoviePage() {
   const { movieid } = useParams();
@@ -57,90 +62,184 @@ export default function MoviePage() {
               <em>{data.tagline}</em>
             </p>
           )}
-          <div className="flex w-fit flex-col gap-5">
-            <SendMovie
-              className={"btn btn-primary btn-lg mx-4 w-72 sm:w-md"}
-              movie={data}
-            />
-            <div className="flex w-full justify-around">
-              <div className="flex flex-col items-center justify-center">
-                <button className="btn btn-lg btn-circle btn-ghost">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
-                    />
-                  </svg>
-                </button>
-                <p className="text-xs">Watchlist</p>
-              </div>
-              <div className="flex flex-col items-center justify-center">
-                <button className="btn btn-lg btn-circle btn-ghost">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-6"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
-                    />
-                  </svg>
-                </button>
-                <p className="text-xs">Favourite</p>
-              </div>
-              <div className="flex flex-col items-center justify-center">
-                <button className="btn-circle btn-lg btn btn-ghost">
-                  {/* <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-circle-icon lucide-circle"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                </svg> */}
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="24"
-                    height="24"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="lucide lucide-circle-check-big-icon lucide-circle-check-big"
-                  >
-                    <path d="M21.801 10A10 10 0 1 1 17 3.335" />
-                    <path d="m9 11 3 3L22 4" />
-                  </svg>
-                </button>
-                <p className="text-xs">Completed</p>
-              </div>
-            </div>
-          </div>
+
+          <MovieListControlls movie={data} />
           <WatchProviders movie={data} />
           <ExtraDetails movie={data} />
         </div>
       )}
+    </div>
+  );
+}
+
+function MovieListControlls({ movie }) {
+  const queryClient = useQueryClient();
+  const {
+    data,
+    error,
+    isLoading: isFetching,
+  } = useQuery({
+    queryKey: ["item-in-list", movie.id],
+    queryFn: () => getUserListsByItem({ item: movie.id }),
+  });
+  const { isPending: isUpdating, mutate: updateItem } = useMutation({
+    mutationFn: async ({ list_type, remove }) => {
+      if (remove) {
+        await deleteItemFromUserList({ list_type, value: movie.id });
+      } else await addToUserList({ list_type, value: movie.id });
+    },
+    onSuccess: () => {
+      console.log("Updated");
+      queryClient.invalidateQueries(["item-in-list", movie.id]);
+    },
+    onError: (error) => {
+      console.log("error while action", error.message);
+    },
+  });
+  const isCompleted = data?.includes("completed");
+  const isFavourite = data?.includes("favourite");
+  const isWatchList = data?.includes("watchlater");
+  return (
+    <div className="flex w-fit flex-col gap-5">
+      <SendMovie
+        className={"btn btn-primary btn-lg mx-4 w-72 sm:w-md"}
+        movie={movie}
+      />
+      <div className="flex w-full justify-around">
+        <div className="flex flex-col items-center justify-center">
+          <button
+            disabled={isFetching || isUpdating}
+            onClick={() =>
+              updateItem({ list_type: "watchlater", remove: isWatchList })
+            }
+            className="btn btn-lg btn-circle btn-ghost"
+          >
+            {isWatchList ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="size-6"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M6.32 2.577a49.255 49.255 0 0 1 11.36 0c1.497.174 2.57 1.46 2.57 2.93V21a.75.75 0 0 1-1.085.67L12 18.089l-7.165 3.583A.75.75 0 0 1 3.75 21V5.507c0-1.47 1.073-2.756 2.57-2.93Z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                />
+              </svg>
+            )}
+          </button>
+          <p className="text-xs">Watchlist</p>
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <button
+            onClick={() =>
+              updateItem({ list_type: "favourite", remove: isFavourite })
+            }
+            disabled={isFetching || isUpdating}
+            className="btn btn-lg btn-circle btn-ghost"
+          >
+            {isFavourite ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="size-6"
+              >
+                <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+                />
+              </svg>
+            )}
+          </button>
+          <p className="text-xs">Favourite</p>
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <button
+            disabled={isFetching || isUpdating}
+            onClick={() =>
+              updateItem({ list_type: "completed", remove: isCompleted })
+            }
+            className="btn-circle btn-lg btn btn-ghost"
+          >
+            {/* <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        class="lucide lucide-circle-icon lucide-circle"
+      >
+        <circle cx="12" cy="12" r="10" />
+      </svg> */}
+            {isCompleted ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-circle-check-big-icon lucide-circle-check-big"
+              >
+                <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+                <path d="m9 11 3 3L22 4" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-circle-icon lucide-circle"
+              >
+                <circle cx="12" cy="12" r="10" />
+              </svg>
+            )}
+          </button>
+          <p className="text-xs">Completed</p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -199,7 +298,7 @@ function WatchProviders({ movie }) {
         <div className="flex w-full items-center justify-center">
           {providersArr.length > 0 && (
             <div className="my-3 flex w-full flex-col gap-4">
-              <div role="tablist" class="tabs tabs-lift w-full">
+              <div role="tablist" className="tabs tabs-lift w-full">
                 {providersArr.map((type, i) => {
                   return (
                     <>
@@ -317,9 +416,9 @@ function MovieCard({ movie }) {
       style={{
         backgroundImage: `url(${`https://image.tmdb.org/t/p/w780${movie.backdrop_path}`})`,
       }}
-      className={`rounded-box relative max-h-96 border-0 bg-no-repeat bg-origin-border p-4 ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : ""} flex w-full items-center bg-contain bg-right`}
+      className={`rounded-box relative max-h-96 border-0 bg-no-repeat bg-origin-border p-4 ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : ""} flex w-full items-center bg-cover`}
     >
-      <div className="bg-base-100 absolute inset-0 h-full w-full rounded-xl mask-r-from-10% mask-r-to-60% opacity-100"></div>
+      <div className="bg-base-100 absolute inset-0 h-full w-full mask-r-from-10% mask-r-to-60% opacity-100"></div>
       {/* {movie.backdrop_path && (
         <img
           className="w-full object-cover"
