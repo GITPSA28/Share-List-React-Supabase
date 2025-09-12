@@ -25,7 +25,9 @@ export default function MoviePage() {
       {data && (
         <div className="flex max-w-xl flex-col items-center gap-5">
           <div className="w-full max-w-lg">
-            <MovieCard movie={data} />
+            {(data.backdrop_path || data.poster_path) && (
+              <MovieCard movie={data} />
+            )}
           </div>
           <h2 className="gap-1 text-2xl font-bold">
             <a
@@ -38,8 +40,9 @@ export default function MoviePage() {
           <div className="bg-base-200/50 border-base-200 flex w-full flex-col items-center gap-4 border-y-2 mask-r-from-80% mask-l-from-80% py-4">
             <p className="text-md font-semibold opacity-70">
               {data.release_date.split("-")[0]}
-              {" • "}
-              {`${Math.floor(data.runtime / 60)}h ${data.runtime % 60}m`}
+              {data.release_date && data.runtime > 0 && " • "}
+              {data.runtime > 0 &&
+                `${Math.floor(data.runtime / 60)}h ${data.runtime % 60}m`}
             </p>
             <div className="flex w-full flex-wrap items-center justify-center text-xs uppercase opacity-70">
               {data.genres.slice(0, 3).map((v) => (
@@ -144,12 +147,14 @@ export default function MoviePage() {
 
 function ExtraDetails({ movie }) {
   return (
-    <div className="join join-vertical bg-base-100">
-      <div className="collapse-arrow join-item border-base-300 collapse border">
-        <input type="radio" name="my-accordion-4" />
-        <div className="collapse-title font-semibold">Overview</div>
-        <div className="collapse-content text-sm">{movie.overview}</div>
-      </div>
+    <div className="join join-vertical bg-base-100 w-full">
+      {movie.overview && (
+        <div className="collapse-arrow join-item border-base-300 collapse border">
+          <input type="radio" name="my-accordion-4" />
+          <div className="collapse-title font-semibold">Overview</div>
+          <div className="collapse-content text-sm">{movie.overview}</div>
+        </div>
+      )}
       <div className="collapse-arrow join-item border-base-300 collapse border">
         <input type="radio" name="my-accordion-4" />
         <div className="collapse-title font-semibold">Cast</div>
@@ -178,7 +183,7 @@ function WatchProviders({ movie }) {
     queryKey: ["movie-providers", movie.id],
     queryFn: () => getMovieWatchProviders({ movie_id: movie.id }),
   });
-  const providers = data?.results?.IN || [];
+  const providers = data?.results?.["IN"] || [];
   const providersArr = Object.keys(providers)
     .filter((k) => k !== "link")
     .map((k) => {
@@ -187,7 +192,6 @@ function WatchProviders({ movie }) {
         values: providers[k],
       };
     });
-  console.log(providersArr);
 
   return (
     <>
@@ -223,7 +227,7 @@ function WatchProviders({ movie }) {
                                   >
                                     <img
                                       key={v.provider_id}
-                                      className={`h-10 w-10 rounded-sm`}
+                                      className={`h-10 w-10 rounded-xl`}
                                       src={`https://image.tmdb.org/t/p/w500/${v.logo_path}`}
                                       alt=""
                                     />
@@ -255,7 +259,7 @@ function Credits({ movie, type }) {
     queryFn: () => getMovieCredits({ movie_id: movie.id }),
   });
   if (isCreditsLoading) return <Spinner />;
-  if (people?.[type]?.length < 1) return <>none</>;
+  if (people?.[type]?.length < 1) return <>No data available</>;
   let team = people?.[type];
   let max_length = 10;
   let mainteam = new Set([
