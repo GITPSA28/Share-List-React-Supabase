@@ -188,7 +188,7 @@ function MovieListControlls({ movie }) {
             onClick={() =>
               updateItem({ list_type: "completed", remove: isCompleted })
             }
-            className="btn-circle btn-lg btn btn-ghost"
+            className="btn-circle btn-lg btn btn-ghost swap swap-rotate"
           >
             {/* <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -204,38 +204,36 @@ function MovieListControlls({ movie }) {
       >
         <circle cx="12" cy="12" r="10" />
       </svg> */}
-            {isCompleted ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-circle-check-big-icon lucide-circle-check-big"
-              >
-                <path d="M21.801 10A10 10 0 1 1 17 3.335" />
-                <path d="m9 11 3 3L22 4" />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-circle-icon lucide-circle"
-              >
-                <circle cx="12" cy="12" r="10" />
-              </svg>
-            )}
+
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`${isCompleted ? "swap-active" : ""}swap-on lucide lucide-circle-check-big-icon lucide-circle-check-big`}
+            >
+              <path d="M21.801 10A10 10 0 1 1 17 3.335" />
+              <path d="m9 11 3 3L22 4" />
+            </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className={`${isCompleted ? "swap-active" : ""}swap-off lucide lucide-circle-icon lucide-circle`}
+            >
+              <circle cx="12" cy="12" r="10" />
+            </svg>
           </button>
           <p className="text-xs">Completed</p>
         </div>
@@ -416,9 +414,9 @@ function MovieCard({ movie }) {
       style={{
         backgroundImage: `url(${`https://image.tmdb.org/t/p/w780${movie.backdrop_path}`})`,
       }}
-      className={`rounded-box relative max-h-96 border-0 bg-no-repeat bg-origin-border p-4 ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : ""} flex w-full items-center bg-cover`}
+      className={`rounded-box relative max-h-96 border-0 bg-no-repeat p-4 ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : ""} flex w-full items-center bg-cover`}
     >
-      <div className="bg-base-100 absolute inset-0 h-full w-full mask-r-from-10% mask-r-to-60% opacity-100"></div>
+      <div className="rounded-box absolute inset-0 h-full w-full mask-r-from-10% mask-r-to-40% opacity-100 backdrop-blur-sm"></div>
       {/* {movie.backdrop_path && (
         <img
           className="w-full object-cover"
