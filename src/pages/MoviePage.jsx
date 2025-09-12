@@ -37,7 +37,7 @@ export default function MoviePage() {
               {data.title + " "}
             </a>
           </h2>
-          <div className="bg-base-200/50 border-base-200 flex w-full flex-col items-center gap-4 border-y-2 mask-r-from-80% mask-l-from-80% py-4">
+          <div className="bg-base-200/50 border-base-200 flex w-full flex-col items-center gap-2 border-y-2 mask-r-from-80% mask-l-from-80% py-4">
             <p className="text-md font-semibold opacity-70">
               {data.release_date.split("-")[0]}
               {data.release_date && data.runtime > 0 && " • "}
@@ -53,7 +53,7 @@ export default function MoviePage() {
             </div>
           </div>
           {data.tagline && (
-            <p className="my-2 opacity-90">
+            <p className="opacity-90">
               <em>{data.tagline}</em>
             </p>
           )}
@@ -317,8 +317,9 @@ function MovieCard({ movie }) {
       style={{
         backgroundImage: `url(${`https://image.tmdb.org/t/p/w780${movie.backdrop_path}`})`,
       }}
-      className={`rounded-box max-h-96 p-4 pb-10 ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : ""} bg-full flex w-full items-center bg-cover shadow-sm`}
+      className={`rounded-box relative max-h-96 border-0 bg-no-repeat bg-origin-border p-4 ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : ""} flex w-full items-center bg-contain bg-right`}
     >
+      <div className="bg-base-100 absolute inset-0 h-full w-full rounded-xl mask-r-from-10% mask-r-to-60% opacity-100"></div>
       {/* {movie.backdrop_path && (
         <img
           className="w-full object-cover"
@@ -328,7 +329,7 @@ function MovieCard({ movie }) {
       )} */}
       {movie.poster_path && (
         <img
-          className="z-10 w-26 rounded-sm mask-none shadow-md sm:w-32"
+          className="rounded-box z-10 w-26 mask-none shadow-md sm:w-32"
           src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
         />
       )}
