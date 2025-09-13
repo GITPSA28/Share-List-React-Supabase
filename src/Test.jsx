@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import supabase from "./services/supabase.js";
-import { useUser } from "./features/authentication/useUser.js";
-import Logout from "./features/authentication/Logout.jsx";
 import MovieCard from "./ui/MovieCard.jsx";
 import { useSession } from "./contexts/SessionContext.jsx";
 import { Link } from "react-router";
@@ -201,14 +199,24 @@ function MovieList({ list }) {
           {`${list?.owner_profile?.username}'s `}
         </Link>
 
-        <em>
-          <Link
-            className="link-hover text-sm opacity-70"
-            to={`/list/${list.list_id}`}
+        <Link
+          className="link-hover link flex items-center text-sm opacity-70 hover:opacity-100"
+          to={`/list/${list.list_id}`}
+        >
+          <em>{list.list_name} </em>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="size-4"
           >
-            {list.list_name}
-          </Link>
-        </em>
+            <path
+              fillRule="evenodd"
+              d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </Link>
       </h2>
       <ul
         className={`bg-base-100 no-scrollbar mt-3 flex justify-start gap-3 overflow-x-auto pl-4`}
