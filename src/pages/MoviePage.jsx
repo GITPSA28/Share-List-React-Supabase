@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Link, useParams } from "react-router";
 import {
   getMovieCredits,
@@ -22,7 +22,6 @@ export default function MoviePage() {
     queryFn: () => getMovieDetails({ movie_id: movieid }),
   });
 
-  // console.log(watchProviders, isWatchProvidersLoading, watchProvidersError);
   return (
     <div className="bg-base-100 flex flex-col items-center justify-center gap-3 pt-5">
       {isLoading && <FullscreenSpinner />}
@@ -37,7 +36,7 @@ export default function MoviePage() {
           <h2 className="gap-1 text-2xl font-bold">
             <a
               className="cursor-pointer hover:text-[#40BCF4]"
-              href={`${data.homepage}`}
+              href={`${data.homepage || "#"}`}
             >
               {data.title + " "}
             </a>
@@ -299,7 +298,7 @@ function WatchProviders({ movie }) {
               <div role="tablist" className="tabs tabs-lift w-full">
                 {providersArr.map((type, i) => {
                   return (
-                    <>
+                    <Fragment key={i}>
                       <button
                         role="tab"
                         onClick={() => setCurTab(i)}
@@ -320,10 +319,10 @@ function WatchProviders({ movie }) {
                               type.values.map((v) => {
                                 return (
                                   <div
+                                    key={v.provider_id}
                                     className={`${curTab === i ? "h-10 w-10 flex-none" : "hidden"}`}
                                   >
                                     <img
-                                      key={v.provider_id}
                                       className={`h-10 w-10 rounded-xl`}
                                       src={`https://image.tmdb.org/t/p/w500/${v.logo_path}`}
                                       alt=""
@@ -334,7 +333,7 @@ function WatchProviders({ movie }) {
                           </>
                         </div>
                       </div>
-                    </>
+                    </Fragment>
                   );
                 })}
               </div>
