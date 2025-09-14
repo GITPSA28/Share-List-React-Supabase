@@ -6,6 +6,7 @@ import FullscreenSpinner from "../ui/FullscreenSpinner";
 import { addToUserList } from "../services/apiUserList";
 import SendMovie from "../components/SendMovie";
 import MovieCard from "../ui/MovieCard";
+import AddToList from "../components/AddToList";
 
 export default function SearchPage() {
   const { isLoading, movieResults } = useSearchMovies();
@@ -88,24 +89,7 @@ function MovieSearchResults({ movieList, className }) {
 function ResultCard({ movie }) {
   return (
     <MovieCard movie={movie}>
-      <button className="btn btn-sm btn-ghost">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="lucide lucide-info-icon lucide-info"
-        >
-          <path d="M5 12h14" />
-          <path d="M12 5v14" />
-        </svg>
-        Add
-      </button>
+      <AddToList movie={movie} />
       <SendMovie movie={movie} />
     </MovieCard>
   );

@@ -88,5 +88,14 @@ export async function getListById({ list_id }) {
   if (data.length < 1) return [];
   return data[0];
 }
-
+export async function getUserLists({ user_id }) {
+  const { data, error } = await supabase
+    .from("lists")
+    .select()
+    .neq("list_type", "recommendation")
+    .eq("owner_id", user_id);
+  if (error) throw error;
+  if (data.length < 1) return [];
+  return data;
+}
 //lists_owner_id_fkey1
