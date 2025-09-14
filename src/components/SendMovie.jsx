@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-
 import Modal from "../ui/Modal";
 import Avatar from "../ui/Avatar";
 import useFriendList from "../features/friends/useFriendList";
-import FullscreenSpinner from "../ui/FullscreenSpinner";
 import { useSession } from "../contexts/SessionContext";
 import { useSendItemsToFriends } from "../features/friends/useSendItemsToFreinds";
 import Spinner from "../ui/Spinner";
@@ -77,16 +75,13 @@ function SelectFriends({ movie, friendList, isLoading }) {
     setSelectedFreinds((ids) => [...ids.filter((el) => el != id)]);
   }
   function handleSend() {
-    sendItemsToFriendIds(
-      { value: movie.id, type: "movie", friendIds: selectedFriends },
-      {
-        onSuccess: () => {
-          console.log("success");
-        },
-      },
-    );
+    sendItemsToFriendIds({
+      value: movie.id,
+      type: "movie",
+      friendIds: selectedFriends,
+    });
   }
-  if (isLoading) return <Spinner />;
+  if (isLoading || isSending) return <Spinner />;
   if (!friendList && !isLoading) return <p>No friends</p>;
   return (
     <>
