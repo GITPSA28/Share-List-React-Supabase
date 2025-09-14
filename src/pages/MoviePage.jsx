@@ -26,6 +26,7 @@ export default function MoviePage() {
     <div className="bg-base-100 flex flex-col items-center justify-center gap-3 pt-5">
       {isLoading && <FullscreenSpinner />}
       {!isLoading && !data && <p>No data</p>}
+      {!isLoading && error && <p>Error while getting the title</p>}
       {data && (
         <div className="flex max-w-xl flex-col items-center gap-5">
           <div className="w-full max-w-lg">
@@ -33,7 +34,7 @@ export default function MoviePage() {
               <MovieCard movie={data} />
             )}
           </div>
-          <h2 className="gap-1 text-2xl font-bold">
+          <h2 className="gap-1 text-2xl font-bold sm:text-3xl">
             <a
               className="cursor-pointer hover:text-[#40BCF4]"
               href={`${data.homepage || "#"}`}
