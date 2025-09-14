@@ -4,7 +4,7 @@ import Test from "./test";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import ProtectedRoute from "./ui/ProtectedRoute";
 import AppLayout from "./ui/AppLayout";
-import { ThemeProvider, useTheme } from "./contexts/ThemeContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import Settings from "./pages/Settings";
 import CheckUsername from "./ui/CheckUsername";
 import SetUserName from "./pages/SetUserName";
@@ -16,6 +16,7 @@ import { SessionProvider } from "./contexts/SessionContext";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import ListPage from "./pages/ListPage";
 import MoviePage from "./pages/MoviePage";
+import { Toaster } from "react-hot-toast";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -57,6 +58,25 @@ function App() {
           </SessionProvider>
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpen={false} />
+        <Toaster
+          position="top-center"
+          gutter={12}
+          containerStyle={{ margin: "8px" }}
+          toastOptions={{
+            success: {
+              duration: 3000,
+            },
+            error: {
+              duration: 5000,
+            },
+            style: {
+              fontSize: "16px",
+              maxWidth: "500px",
+              backgroundColor: "var(--color-neutral)",
+              color: "var(--color-neutral-content)",
+            },
+          }}
+        />
       </QueryClientProvider>
     </ThemeProvider>
   );
