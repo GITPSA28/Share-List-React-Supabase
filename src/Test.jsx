@@ -13,14 +13,6 @@ function Test() {
 
   useEffect(() => {
     async function getMovies() {
-      // let { data: listsResult, error } = await supabase
-      //   .from("lists")
-      //   .select(`*,items (*)`)
-      //   .eq("items.type", "movie")
-      //   .or(
-      //     `and(owner_id.eq.${user.id},recommended_to.is.null),recommended_to.eq.${user.id}`,
-      //   );
-      // `user.id` is the authenticated user’s UUID
       const { data: listsResult, error } = await supabase
         .from("lists")
         .select(
@@ -37,13 +29,6 @@ function Test() {
         .order("created_at", { ascending: false })
         .order("created_at", { foreignTable: "items", ascending: false });
       if (error) throw error;
-      // let filteredList = listsResult
-      //   .filter((list) => list.items.length > 0)
-      //   .sort(
-      //     (a, b) =>
-      //       new Date(b.items[0].created_at).getTime -
-      //       new Date(a.items[0].created_at).getTime,
-      //   );
       console.log(listsResult);
       setLists(listsResult);
     }
@@ -235,58 +220,3 @@ function MovieList({ list }) {
   );
 }
 
-// <li className="list-row my-2 items-center" key={movie.id}>
-//   <div className="flex items-center justify-center">
-//     {/* <img
-//       className="rounded-box absolute w-18 opacity-80 blur"
-//       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-//     /> */}
-//     <img
-//       className="rounded-box z-10 w-16"
-//       src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-//     />
-//   </div>
-//   <div>
-//     <div className="text-xs font-semibold uppercase opacity-60">
-//       {movie.title}
-//     </div>
-//     <div className="flex items-center gap-2 text-base">
-//       {Math.round(movie.vote_average * 5) / 10}
-//       <Rating value={movie.vote_average} />
-//     </div>
-//   </div>
-//   <button className="btn btn-square btn-ghost">
-//     <svg
-//       className="size-[1.2em]"
-//       xmlns="http://www.w3.org/2000/svg"
-//       viewBox="0 0 24 24"
-//     >
-//       <g
-//         strokeLinejoin="round"
-//         strokeLinecap="round"
-//         strokeWidth="2"
-//         fill="none"
-//         stroke="currentColor"
-//       >
-//         <path d="M6 3L20 12 6 21 6 3z"></path>
-//       </g>
-//     </svg>
-//   </button>
-//   <button className="btn btn-square btn-ghost">
-//     <svg
-//       className="size-[1.2em]"
-//       xmlns="http://www.w3.org/2000/svg"
-//       viewBox="0 0 24 24"
-//     >
-//       <g
-//         strokeLinejoin="round"
-//         strokeLinecap="round"
-//         strokeWidth="2"
-//         fill="currentColor"
-//         stroke="currentColor"
-//       >
-//         <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"></path>
-//       </g>
-//     </svg>
-//   </button>
-// </li>
