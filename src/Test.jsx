@@ -207,7 +207,7 @@ function MovieList({ list }) {
         className={`bg-base-100 no-scrollbar mt-3 flex justify-start gap-3 overflow-x-auto pl-4`}
       >
         {movies.map((movie) => (
-          <div className="w-96 shrink-0">
+          <div key={movie.id} className="w-96 shrink-0">
             <MovieCard
               key={movie.id}
               movie={movie}
@@ -219,4 +219,3 @@ function MovieList({ list }) {
     </div>
   );
 }
-
