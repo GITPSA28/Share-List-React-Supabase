@@ -101,7 +101,7 @@ function SelectFriends({ movie, friendList, isLoading }) {
                     name="friend"
                     id={friend.id}
                     onChange={(e) => {
-                      if (e.target.value) addFriendId(friend.id);
+                      if (e.target.checked) addFriendId(friend.id);
                       else removeFriendId(friend.id);
                     }}
                   ></input>
