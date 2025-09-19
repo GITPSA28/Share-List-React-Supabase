@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import { getItemInList, getUserLists } from "../../services/apiUserList";
 import { useSession } from "../../contexts/SessionContext";
 import { useEffect, useState } from "react";

@@ -98,7 +98,7 @@ function MovieListControlls({ movie }) {
   });
   const isCompleted = data?.includes("completed");
   const isFavourite = data?.includes("favourite");
-  const isWatchList = data?.includes("watchlater");
+  const isWatchList = data?.includes("watchlist");
   return (
     <div className="flex w-fit flex-col gap-5">
       <SendMovie
@@ -110,7 +110,7 @@ function MovieListControlls({ movie }) {
           <button
             disabled={isFetching || isUpdating}
             onClick={() =>
-              updateItem({ list_type: "watchlater", remove: isWatchList })
+              updateItem({ list_type: "watchlist", remove: isWatchList })
             }
             className="btn btn-lg btn-circle btn-ghost"
           >

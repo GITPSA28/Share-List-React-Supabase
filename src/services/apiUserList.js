@@ -35,7 +35,7 @@ export async function getUserListsByItem({ item }) {
     .from("lists")
     .select("list_type,items!inner()")
     .eq("items.value", item)
-    .in("list_type", ["watchlater", "favourite", "completed"]);
+    .in("list_type", ["watchlist", "favourite", "completed"]);
   // .eq("lists.list_type", "completed");
   // .eq("lists.owner_id", user_id);
   if (error) throw error;
@@ -97,5 +97,32 @@ export async function getUserLists({ user_id }) {
   if (error) throw error;
   if (data.length < 1) return [];
   return data;
+}
+
+export async function getItemInList({ item, lists }) {
+  const { data: res, error } = await supabase
+    .from("items")
+    .select("*")
+    .eq("value", item)
+    .in(
+      "list_id",
+      lists.map((list) => list.list_id),
+    );
+  if (error) throw error;
+  const data = lists.map((list) => {
+    const isExists = res.some((val) => val.list_id === list.list_id);
+    return { ...list, isExists };
+  });
+  return data;
+}
+
+export async function deleteItemFromList({ item, list_id }) {
+  const { error } = await supabase
+    .from("items")
+    .delete({ count: 1 })
+    .eq("value", item)
+    .eq("list_id", list_id);
+  if (error) throw error;
+  return true;
 }
 //lists_owner_id_fkey1
