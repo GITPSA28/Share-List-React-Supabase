@@ -1,7 +1,8 @@
-import React from "react";
-import useUsersList from "../features/lists/useUsersList";
+import React, { useState } from "react";
 import Modal from "../ui/Modal";
 import Spinner from "../ui/Spinner";
+import useItemInUsersList from "../features/lists/useItemInUsersList";
+import { useUpdateListItems } from "../features/lists/useUpdateUserList";
 
 export default function AddToList({ movie, className, children }) {
   return (
@@ -41,21 +42,56 @@ export default function AddToList({ movie, className, children }) {
   );
 }
 function AddToListContent({ movie }) {
-  const { lists, isLoading } = useUsersList();
+  const { lists, isLoading } = useItemInUsersList({ item: movie.id });
   if (isLoading) return <Spinner />;
   return <SelectList movie={movie} userList={lists} isLoading={isLoading} />;
 }
 
-function SelectList({ movie, userList }) {
-  if (!userList.length) return <>No List found</>;
+function SelectList({ movie, userList, isLoading }) {
+  const { isUpdating, updateList } = useUpdateListItems({ item: movie.id });
+  const [selectedList, setSelectedList] = useState(() => {
+    const initLists = userList.map((list) => {
+      return {
+        checked: list.isExists,
+        initChecked: list.isExists,
+        list_name: list.list_name,
+        list_id: list.list_id,
+      };
+    });
+    return initLists;
+  });
+  function updateSelectedList(list_id, checked) {
+    setSelectedList((lists) => [
+      ...lists.map((list) => {
+        if (list.list_id !== list_id) return list;
+        return { ...list, checked };
+      }),
+    ]);
+  }
+  function handleSubmit() {
+    updateList({
+      value: movie.id,
+      type: "movie",
+      lists: selectedList.filter((list) => list.initChecked !== list.checked),
+    });
+  }
+  if (isLoading) return <></>;
+  if (!selectedList.length) return <>No List found</>;
   return (
     <div>
       <ul>
-        {userList.map((list) => {
+        {selectedList.map((list) => {
           return (
-            <fieldset className="fieldset m-2">
+            <fieldset key={list.list_id} className="fieldset m-2">
               <label className="label text-base-content py-2">
-                <input type="checkbox" className="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={list.checked}
+                  onChange={(e) =>
+                    updateSelectedList(list.list_id, e.target.checked)
+                  }
+                  className="checkbox"
+                />
                 {list.list_name}
               </label>
             </fieldset>
@@ -66,7 +102,8 @@ function SelectList({ movie, userList }) {
         <Modal.ModalClose className={"btn btn-sm sm:btn-md"} />
         {/* {selectedFriends.length > 0 && ( */}
         <Modal.ModalClose
-          //   submit={handleSend}
+          disabled={isUpdating}
+          submit={handleSubmit}
           className="btn-primary btn btn-sm sm:btn-md"
         >
           Save

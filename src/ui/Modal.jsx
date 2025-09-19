@@ -36,10 +36,11 @@ function ModalContent({ children, className }) {
 function ModalAction({ children }) {
   return <div className="modal-action">{children}</div>;
 }
-function ModalClose({ children, className, submit }) {
+function ModalClose({ children, className, submit, disabled = false }) {
   const { close } = useContext(ModalContext);
   return (
     <button
+      disabled={disabled}
       onClick={(e) => {
         e.preventDefault();
         if (submit) submit(e);
