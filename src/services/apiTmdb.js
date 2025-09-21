@@ -38,6 +38,18 @@ export async function getMovieDetails({ movie_id }) {
     throw new Error(e.message);
   }
 }
+export async function getTvDetails({ tv_id }) {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/tv/${tv_id}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+    );
+    if (!res.ok) throw new Error(res.message);
+    const data = res.json();
+    return data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
 export async function getMovieWatchProviders({ movie_id }) {
   try {
     const res = await fetch(
@@ -50,10 +62,34 @@ export async function getMovieWatchProviders({ movie_id }) {
     throw new Error(e.message);
   }
 }
+export async function getTvWatchProviders({ tv_id }) {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/tv/${tv_id}/watch/providers?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+    );
+    if (!res.ok) throw new Error(res.message);
+    const data = res.json();
+    return data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
 export async function getMovieCredits({ movie_id }) {
   try {
     const res = await fetch(
       `https://api.themoviedb.org/3/movie/${movie_id}/credits?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+    );
+    if (!res.ok) throw new Error(res.message);
+    const data = res.json();
+    return data;
+  } catch (e) {
+    throw new Error(e.message);
+  }
+}
+export async function getTvCredits({ tv_id }) {
+  try {
+    const res = await fetch(
+      `https://api.themoviedb.org/3/tv/${tv_id}/credits?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
     );
     if (!res.ok) throw new Error(res.message);
     const data = res.json();
