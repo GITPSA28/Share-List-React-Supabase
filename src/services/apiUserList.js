@@ -1,12 +1,12 @@
-import { getCurrentUser } from "./apiAuth";
 import supabase from "./supabase";
 
 export async function addToUserList({
   list_type = "completed",
   value,
   type = "movie",
+  user_id,
 }) {
-  const list_id = await getUserTableIdByListType(list_type);
+  const list_id = await getUserTableIdByListType(user_id, list_type);
   const { data, error } = await supabase
     .from("items")
     .insert([{ list_id, value, type }])
@@ -18,9 +18,9 @@ export async function addToUserList({
 export async function deleteItemFromUserList({
   list_type = "completed",
   value,
-  type = "movie",
+  user_id,
 }) {
-  const list_id = await getUserTableIdByListType(list_type);
+  const list_id = await getUserTableIdByListType(user_id, list_type);
   const { data, error } = await supabase
     .from("items")
     .delete()
@@ -30,12 +30,13 @@ export async function deleteItemFromUserList({
   return data;
 }
 
-export async function getUserListsByItem({ item, type = "movie" }) {
+export async function getUserListsByItem({ user_id, item, type = "movie" }) {
   const { data, error } = await supabase
     .from("lists")
     .select("list_type,items!inner()")
     .eq("items.value", item)
     .eq("items.type", type)
+    .eq("owner_id", user_id)
     .in("list_type", ["watchlist", "favourite", "completed"]);
   // .eq("lists.list_type", "completed");
   // .eq("lists.owner_id", user_id);
@@ -44,13 +45,13 @@ export async function getUserListsByItem({ item, type = "movie" }) {
   return data.map((list) => list.list_type);
 }
 
-export async function getUserTableIdByListType(list_type) {
-  const user = await getCurrentUser();
-  if (!user) throw new Error("Error while fetching current user");
+export async function getUserTableIdByListType(user_id, list_type) {
+  // const user = await getCurrentUser();
+  if (!user_id) throw new Error("no user id found");
   const { data: list_ids, error } = await supabase
     .from("lists")
     .select("list_id")
-    .filter("owner_id", "eq", user.id)
+    .filter("owner_id", "eq", user_id)
     .filter("list_type", "eq", list_type);
   if (error) throw error;
   if (!list_ids.length) return null;

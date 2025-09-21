@@ -15,6 +15,7 @@ import {
   getUserListsByItem,
 } from "../services/apiUserList";
 import AddToList from "../components/AddToList";
+import { useSession } from "../contexts/SessionContext";
 
 export default function MoviePage() {
   const { movieid } = useParams();
@@ -79,18 +80,23 @@ export default function MoviePage() {
 function MovieListControlls({ movie, type }) {
   const queryClient = useQueryClient();
   const {
+    session: {
+      user: { id: user_id },
+    },
+  } = useSession();
+  const {
     data,
     error,
     isLoading: isFetching,
   } = useQuery({
     queryKey: ["item-in-list", type, movie.id],
-    queryFn: () => getUserListsByItem({ item: movie.id, type }),
+    queryFn: () => getUserListsByItem({ user_id, item: movie.id, type }),
   });
   const { isPending: isUpdating, mutate: updateItem } = useMutation({
     mutationFn: async ({ list_type, remove }) => {
       if (remove) {
-        await deleteItemFromUserList({ list_type, value: movie.id });
-      } else await addToUserList({ list_type, value: movie.id });
+        await deleteItemFromUserList({ user_id, list_type, value: movie.id });
+      } else await addToUserList({ user_id, list_type, value: movie.id });
     },
     onSuccess: () => {
       console.log("Updated");

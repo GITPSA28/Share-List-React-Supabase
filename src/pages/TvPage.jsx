@@ -15,6 +15,7 @@ import {
 } from "../services/apiUserList";
 import SendItem from "../components/SendItem";
 import AddItemToList from "../components/AddItemToList";
+import { useSession } from "../contexts/SessionContext";
 
 export default function TvPage() {
   const { tvid } = useParams();
@@ -82,18 +83,23 @@ export default function TvPage() {
 function TvListControlls({ tv, type }) {
   const queryClient = useQueryClient();
   const {
+    session: {
+      user: { id: user_id },
+    },
+  } = useSession();
+  const {
     data,
     error,
     isLoading: isFetching,
   } = useQuery({
     queryKey: ["item-in-list", type, tv.id],
-    queryFn: () => getUserListsByItem({ item: tv.id, type }),
+    queryFn: () => getUserListsByItem({ user_id, item: tv.id, type }),
   });
   const { isPending: isUpdating, mutate: updateItem } = useMutation({
     mutationFn: async ({ list_type, remove }) => {
       if (remove) {
-        await deleteItemFromUserList({ list_type, value: tv.id });
-      } else await addToUserList({ list_type, type, value: tv.id });
+        await deleteItemFromUserList({ user_id, list_type, value: tv.id });
+      } else await addToUserList({ user_id, list_type, type, value: tv.id });
     },
     onSuccess: () => {
       console.log("Updated");
