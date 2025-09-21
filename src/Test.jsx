@@ -22,7 +22,7 @@ function Test() {
         owner_profile:profiles!lists_owner_id_fkey1(*)
       `,
         )
-        .eq("items.type", "movie")
+        // .eq("items.type", "movie")
         .or(`recommended_to.eq.${user.id},recommended_to.is.null`)
         // .or(
         //   `and(owner_id.not.eq.${user.id},recommended_to.not.is.null),recommended_to.eq.${user.id}`,
@@ -155,9 +155,16 @@ function MovieList({ list }) {
   useEffect(() => {
     async function getMovies() {
       let movieDetailsReq = items.map(async (movie) => {
-        let res = await fetch(
-          `https://api.themoviedb.org/3/movie/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
-        );
+        let res;
+        if (movie.type === "movie") {
+          res = await fetch(
+            `https://api.themoviedb.org/3/movie/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+          );
+        } else if (movie.type === "tv") {
+          res = await fetch(
+            `https://api.themoviedb.org/3/tv/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+          );
+        }
         return res.json();
       });
       let movieDetailsRes = await Promise.allSettled(movieDetailsReq);
