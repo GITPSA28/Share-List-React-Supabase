@@ -98,6 +98,16 @@ export async function getUserLists({ user_id }) {
   if (data.length < 1) return [];
   return data;
 }
+export async function getCustomUserLists({ user_id }) {
+  const { data, error } = await supabase
+    .from("lists")
+    .select()
+    .eq("list_type", "custom")
+    .eq("owner_id", user_id);
+  if (error) throw error;
+  if (data.length < 1) return [];
+  return data;
+}
 
 export async function getItemInList({ item, lists }) {
   const { data: res, error } = await supabase

@@ -4,13 +4,18 @@ import Spinner from "../ui/Spinner";
 import useItemInUsersList from "../features/lists/useItemInUsersList";
 import { useUpdateListItems } from "../features/lists/useUpdateUserList";
 
-export default function AddToList({ movie, className, children }) {
+export default function AddToList({
+  movie,
+  className,
+  children,
+  custom = false,
+}) {
   return (
     <Modal>
       <Modal.ModalContent className={"text-base-content bg-base-100"}>
         <h3 className="text-lg font-bold">Add {movie.title}</h3>
         <p className="py-4">Select Lists</p>
-        <AddToListContent movie={movie} />
+        <AddToListContent movie={movie} custom={custom} />
       </Modal.ModalContent>
       <Modal.OpenModel
         className={className ? className : "btn btn-sm btn-ghost"}
@@ -41,8 +46,8 @@ export default function AddToList({ movie, className, children }) {
     </Modal>
   );
 }
-function AddToListContent({ movie }) {
-  const { lists, isLoading } = useItemInUsersList({ item: movie.id });
+function AddToListContent({ movie, custom }) {
+  const { lists, isLoading } = useItemInUsersList({ item: movie.id, custom });
   if (isLoading) return <Spinner />;
   return <SelectList movie={movie} userList={lists} isLoading={isLoading} />;
 }
