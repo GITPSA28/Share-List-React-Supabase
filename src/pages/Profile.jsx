@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router";
-import {
-  getUserProfileData,
-  getUserProfileDataByUserName,
-} from "../services/apiProfile";
+import { Link, useParams } from "react-router";
+import { getUserProfileDataByUserName } from "../services/apiProfile";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import supabase from "../services/supabase";
 import Spinner from "../ui/Spinner";
-import { useUser } from "../features/authentication/useUser";
 import ManageFriendship from "../components/ManageFriendship";
 
 export default function Profile() {
@@ -124,10 +120,18 @@ function MovieList({ list }) {
     async function getMovies() {
       setIsLoading(true);
       let movieDetailsReq = items.map(async (movie) => {
-        let res = await fetch(
-          `https://api.themoviedb.org/3/movie/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
-        );
-        return res.json();
+        let res;
+        if (movie.type === "movie") {
+          res = await fetch(
+            `https://api.themoviedb.org/3/movie/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+          );
+        } else if (movie.type === "tv") {
+          res = await fetch(
+            `https://api.themoviedb.org/3/tv/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+          );
+        }
+        let data = await res.json();
+        return { ...data, itemType: movie.type };
       });
       let movieDetailsRes = await Promise.allSettled(movieDetailsReq);
       let movieDetails = movieDetailsRes
@@ -149,17 +153,23 @@ function MovieList({ list }) {
       </div>
       <div className="flex snap-x gap-1 overflow-x-auto">
         {movies.map((movie) => (
-          <MovieTile
+          <Link
             key={movie.id}
-            url={
-              movie?.poster_path
-                ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-                : ""
-            }
-            height={"h-48"}
-            width={"h-36"}
-            alt={movie.title}
-          />
+            to={`/${movie.itemType}/${movie.id}`}
+            className="flex-shrink-0"
+          >
+            <MovieTile
+              type={movie.itemType}
+              url={
+                movie?.poster_path
+                  ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                  : ""
+              }
+              height={"h-48"}
+              width={"h-36"}
+              alt={movie.title}
+            />
+          </Link>
         ))}
       </div>
     </div>
