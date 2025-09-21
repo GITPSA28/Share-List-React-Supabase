@@ -33,27 +33,36 @@ export default function ListPage() {
 }
 
 function MovieList({ list }) {
-  const [movies, setMovies] = useState([]);
+  const [listItems, setListItems] = useState([]);
   const { items } = list;
   useEffect(() => {
-    async function getMovies() {
-      let movieDetailsReq = items.map(async (movie) => {
-        let res = await fetch(
-          `https://api.themoviedb.org/3/movie/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
-        );
-        return res.json();
+    async function getItemData() {
+      let itemDetailsReq = items.map(async (item) => {
+        let res;
+        if (item.type === "movie") {
+          res = await fetch(
+            `https://api.themoviedb.org/3/movie/${item.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+          );
+        } else if (item.type === "tv") {
+          res = await fetch(
+            `https://api.themoviedb.org/3/tv/${item.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+          );
+        }
+        let data = await res.json();
+        return { ...data, itemType: item.type };
       });
-      let movieDetailsRes = await Promise.allSettled(movieDetailsReq);
-      let movieDetails = movieDetailsRes
+      let itemDetailsRes = await Promise.allSettled(itemDetailsReq);
+      let itemDetails = itemDetailsRes
         .filter((res) => res.status === "fulfilled")
         .map((res) => res.value);
-      if (movieDetails.length > 0) {
-        setMovies(movieDetails);
+      if (itemDetails.length > 0) {
+        setListItems(itemDetails);
       }
     }
-    getMovies();
+    getItemData();
   }, []);
-  if (!movies?.length) return <>Empty</>;
+  console.log(listItems);
+  if (!listItems?.length) return <>Empty</>;
   return (
     <div>
       <h2 className="font-bold tracking-wide uppercase">
@@ -64,9 +73,14 @@ function MovieList({ list }) {
         <em>{list.list_name}</em>
       </h2>
       <ul className={`bg-base-100 mt-3 flex flex-wrap justify-start gap-3`}>
-        {movies.map((movie) => (
-          <div className="max-w-xl sm:flex-2/5" key={movie.id}>
-            <MovieCard movie={movie} showOverView={false}></MovieCard>
+        {listItems.map((item) => (
+          <div className="max-w-xl sm:flex-2/5" key={item.id}>
+            <MovieCard
+              movie={item}
+              type={item.itemType}
+              showOverView={false}
+            ></MovieCard>
+            {/* <MovieCard movie={item} showOverView={false}></MovieCard> */}
           </div>
         ))}
       </ul>
