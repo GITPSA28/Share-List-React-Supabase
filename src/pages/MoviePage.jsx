@@ -14,6 +14,7 @@ import {
   deleteItemFromUserList,
   getUserListsByItem,
 } from "../services/apiUserList";
+import AddToList from "../components/AddToList";
 
 export default function MoviePage() {
   const { movieid } = useParams();
@@ -101,10 +102,14 @@ function MovieListControlls({ movie }) {
   const isWatchList = data?.includes("watchlist");
   return (
     <div className="flex w-fit flex-col gap-5">
-      <SendMovie
-        className={"btn btn-primary btn-lg mx-4 w-72 sm:w-md"}
-        movie={movie}
-      />
+      <div className="flex w-sm gap-4">
+        <AddToList
+          movie={movie}
+          custom={true}
+          className={"btn btn-accent btn-lg flex-1"}
+        />
+        <SendMovie className={"btn btn-primary btn-lg flex-3"} movie={movie} />
+      </div>
       <div className="flex w-full justify-around">
         <div className="flex flex-col items-center justify-center">
           <button
