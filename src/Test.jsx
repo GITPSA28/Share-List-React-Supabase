@@ -22,13 +22,9 @@ function Test() {
         owner_profile:profiles!lists_owner_id_fkey1(*)
       `,
         )
-        // .eq("items.type", "movie")
         .or(`recommended_to.eq.${user.id},recommended_to.is.null`)
-        // .or(
-        //   `and(owner_id.not.eq.${user.id},recommended_to.not.is.null),recommended_to.eq.${user.id}`,
-        // )
-        .order("created_at", { ascending: false })
-        .order("created_at", { foreignTable: "items", ascending: false });
+        .order("updated_at", { ascending: false })
+        .order("created_at", { referencedTable: "items", ascending: false });
       if (error) throw error;
       console.log(listsResult);
       setLists(listsResult);
@@ -42,7 +38,7 @@ function Test() {
 
   return (
     <div className="bg-base-100">
-      <div className="flex flex-col gap-10">
+      <div className="mt-5 flex flex-col gap-10">
         {lists.length > 0 &&
           lists.map((list) => <MovieList list={list} key={list.id} />)}
       </div>
@@ -165,7 +161,8 @@ function MovieList({ list }) {
             `https://api.themoviedb.org/3/tv/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
           );
         }
-        return res.json();
+        let data = await res.json();
+        return { ...data, itemType: movie.type };
       });
       let movieDetailsRes = await Promise.allSettled(movieDetailsReq);
       let movieDetails = movieDetailsRes
@@ -219,6 +216,7 @@ function MovieList({ list }) {
             <MovieCard
               key={movie.id}
               movie={movie}
+              type={movie.itemType}
               showOverView={false}
             ></MovieCard>
           </div>
