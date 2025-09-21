@@ -6,7 +6,11 @@ import {
 import { useSession } from "../../contexts/SessionContext";
 import { useEffect, useState } from "react";
 
-export default function useItemInUsersList({ item, custom = false }) {
+export default function useItemInUsersList({
+  item,
+  type = "movie",
+  custom = false,
+}) {
   const {
     session: {
       user: { id: user_id },
@@ -25,7 +29,7 @@ export default function useItemInUsersList({ item, custom = false }) {
         } else {
           userLists = await getCustomUserLists({ user_id });
         }
-        const lists = await getItemInList({ item, lists: userLists });
+        const lists = await getItemInList({ item, type, lists: userLists });
         setLists(lists);
       } catch (error) {
         setError(error.message);
