@@ -4,12 +4,13 @@ import { useSearchParams } from "react-router";
 import { useSearchMovies } from "../features/tmdb/useSearchMovies";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import { addToUserList } from "../services/apiUserList";
-import SendMovie from "../components/SendMovie";
 import MovieCard from "../ui/MovieCard";
-import AddToList from "../components/AddToList";
+import AddItemToList from "../components/AddItemToList";
+import SendItem from "../components/SendItem";
+import { useSearchItems } from "../features/tmdb/useSearchItems";
 
 export default function SearchPage() {
-  const { isLoading, movieResults } = useSearchMovies();
+  const { isLoading, itemResults } = useSearchItems();
 
   return (
     <div className="bg-base-100 min-h-svh pt-2 sm:pt-5">
@@ -19,10 +20,10 @@ export default function SearchPage() {
       <div>
         {isLoading && <FullscreenSpinner />}
         <div className="flex items-center justify-center">
-          {!isLoading && movieResults?.results?.length > 0 && (
-            <MovieSearchResults className="" movieList={movieResults.results} />
+          {!isLoading && itemResults?.results?.length > 0 && (
+            <ItemSearchResults className="" itemList={itemResults.results} />
           )}
-          {!isLoading && movieResults?.results?.length === 0 && (
+          {!isLoading && itemResults?.results?.length === 0 && (
             <p className="pt-10">No results</p>
           )}
         </div>
@@ -33,6 +34,7 @@ export default function SearchPage() {
 
 function SearchBarContainer() {
   const [value, setValue] = useState("");
+  const [searchType, setSearchType] = useState("movie");
   const [searchParams, setSearchParams] = useSearchParams();
   const searchBarRef = useRef(null);
 
@@ -44,24 +46,33 @@ function SearchBarContainer() {
 
   useEffect(() => {
     setValue(searchParams.get("query") || "");
+    setSearchType(searchParams.get("type") || "movie");
   }, [searchParams]);
 
   function handleSubmit(e) {
     e.preventDefault();
-    setSearchParams({ query: value });
+    setSearchParams({ query: value, type: searchType });
   }
 
   function onValueChange(query) {
     setValue(query);
   }
+  function handleTypeChange(e) {
+    setSearchType(e.target.value);
+    setSearchParams({ query: value, type: e.target.value });
+  }
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-xl">
       <div className="join join-horizontal w-full">
         <SearchBar value={value} ref={searchBarRef} onChange={onValueChange} />
-        {/* <select className="select select-ghost join-item w-fit">
-      <option selected>Movie</option>
-      <option disabled>TV</option>
-    </select> */}
+        <select
+          value={searchType}
+          onChange={handleTypeChange}
+          className="select select-ghost join-item w-fit"
+        >
+          <option value={"movie"}>Movie</option>
+          <option value={"tv"}>TV</option>
+        </select>
         <button type="submit" className="btn join-item">
           Search
         </button>
@@ -70,27 +81,29 @@ function SearchBarContainer() {
   );
 }
 
-function MovieSearchResults({ movieList, className }) {
+function ItemSearchResults({ itemList, className }) {
+  const [searchParams] = useSearchParams();
+  const type = searchParams.get("type") || "movie";
   return (
     <ul
       className={
         `bg-base-100 mt-3 flex flex-wrap justify-center gap-3 ` + className
       }
     >
-      {movieList.map((movie) => (
+      {itemList.map((movie) => (
         <div className="w-full max-w-md" key={movie.id}>
-          <ResultCard movie={movie} />
+          <ResultCard item={movie} type={type} />
         </div>
       ))}
     </ul>
   );
 }
 
-function ResultCard({ movie }) {
+function ResultCard({ item, type }) {
   return (
-    <MovieCard movie={movie}>
-      <AddToList movie={movie} />
-      <SendMovie movie={movie} />
+    <MovieCard movie={item} type={type}>
+      <AddItemToList item={item} type={type} />
+      <SendItem item={item} type={type} />
     </MovieCard>
   );
 }
