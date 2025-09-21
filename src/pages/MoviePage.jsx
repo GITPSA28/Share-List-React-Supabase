@@ -43,19 +43,22 @@ export default function MoviePage() {
               {data.title + " "}
             </a>
           </h2>
-          <div className="bg-base-200/50 border-base-200 flex w-full flex-col items-center gap-2 border-y-2 mask-r-from-80% mask-l-from-80% py-4">
-            <p className="text-md font-semibold opacity-70">
-              {data.release_date.split("-")[0]}
-              {data.release_date && data.runtime > 0 && " • "}
-              {data.runtime > 0 &&
-                `${Math.floor(data.runtime / 60)}h ${data.runtime % 60}m`}
-            </p>
-            <div className="flex w-full flex-wrap items-center justify-center text-xs uppercase opacity-70">
-              {data.genres.slice(0, 3).map((v) => (
-                <p className="px-2" key={v.id}>
-                  {v.name}
-                </p>
-              ))}
+          <div className="relative w-full py-4">
+            <div className="bg-base-200/50 border-base-200 absolute inset-0 border-y-2 mask-r-from-80% mask-l-from-80%" />
+            <div className="relative flex flex-col items-center gap-2">
+              <p className="text-md font-semibold opacity-70">
+                {data.release_date.split("-")[0]}
+                {data.release_date && data.runtime > 0 && " • "}
+                {data.runtime > 0 &&
+                  `${Math.floor(data.runtime / 60)}h ${data.runtime % 60}m`}
+              </p>
+              <div className="flex w-full flex-wrap items-center justify-center text-xs uppercase opacity-70">
+                {data.genres.slice(0, 3).map((v) => (
+                  <p className="px-2" key={v.id}>
+                    {v.name}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
           {data.tagline && (
@@ -64,7 +67,7 @@ export default function MoviePage() {
             </p>
           )}
 
-          <MovieListControlls movie={data} />
+          <MovieListControlls movie={data} type="movie" />
           <WatchProviders movie={data} />
           <ExtraDetails movie={data} />
         </div>
@@ -73,15 +76,15 @@ export default function MoviePage() {
   );
 }
 
-function MovieListControlls({ movie }) {
+function MovieListControlls({ movie, type }) {
   const queryClient = useQueryClient();
   const {
     data,
     error,
     isLoading: isFetching,
   } = useQuery({
-    queryKey: ["item-in-list", movie.id],
-    queryFn: () => getUserListsByItem({ item: movie.id }),
+    queryKey: ["item-in-list", type, movie.id],
+    queryFn: () => getUserListsByItem({ item: movie.id, type }),
   });
   const { isPending: isUpdating, mutate: updateItem } = useMutation({
     mutationFn: async ({ list_type, remove }) => {
@@ -102,11 +105,11 @@ function MovieListControlls({ movie }) {
   const isWatchList = data?.includes("watchlist");
   return (
     <div className="flex w-fit flex-col gap-5">
-      <div className="flex w-sm gap-4">
+      <div className="flex w-72 gap-4 sm:w-sm">
         <AddToList
           movie={movie}
           custom={true}
-          className={"btn btn-accent btn-lg flex-1"}
+          className={"btn btn-soft btn-lg flex-1"}
         />
         <SendMovie className={"btn btn-primary btn-lg flex-3"} movie={movie} />
       </div>

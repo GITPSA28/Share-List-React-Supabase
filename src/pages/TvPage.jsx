@@ -1,20 +1,18 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { Fragment, useState } from "react";
-import { Link, useParams } from "react-router";
+import { useParams } from "react-router";
 import {
   getTvCredits,
   getTvDetails,
   getTvWatchProviders,
 } from "../services/apiTmdb";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
-import SendMovie from "../components/SendMovie";
 import Spinner from "../ui/Spinner";
 import {
   addToUserList,
   deleteItemFromUserList,
   getUserListsByItem,
 } from "../services/apiUserList";
-import AddToList from "../components/AddToList";
 import SendItem from "../components/SendItem";
 import AddItemToList from "../components/AddItemToList";
 
@@ -43,25 +41,29 @@ export default function TvPage() {
               {data.name + " "}
             </a>
           </h2>
-          <div className="bg-base-200/50 border-base-200 flex w-full flex-col items-center gap-2 border-y-2 mask-r-from-80% mask-l-from-80% py-4">
-            <p className="text-md text-center font-semibold opacity-70">
-              {data.first_air_date.split("-")[0]}
-              {/* {data.first_air_date && data.number_of_episodes > 0 && " • "} */}
-              <br />
-              {data.number_of_seasons > 0 &&
-                `${data.number_of_seasons} ${data.number_of_seasons > 1 ? "Seasons" : "Season"}`}
-              {" | "}
-              {data.number_of_episodes > 0 &&
-                `${data.number_of_episodes} ${data.number_of_episodes > 1 ? "Episode" : "Episodes"}`}
-            </p>
-            <div className="flex w-full flex-wrap items-center justify-center text-xs uppercase opacity-70">
-              {data.genres.slice(0, 3).map((v) => (
-                <p className="px-2" key={v.id}>
-                  {v.name}
-                </p>
-              ))}
+          <div className="relative w-full py-4">
+            <div className="bg-base-200/50 border-base-200 absolute inset-0 border-y-2 mask-r-from-80% mask-l-from-80%" />
+            <div className="relative flex flex-col items-center gap-2">
+              {/* <div className="bg-base-200/50 border-base-200 flex w-full flex-col items-center gap-2 border-y-2 mask-r-from-80% mask-l-from-80% py-4"> */}
+              <p className="text-md text-center font-semibold opacity-70">
+                {data.first_air_date.split("-")[0]}
+                <br />
+                {data.number_of_seasons > 0 &&
+                  `${data.number_of_seasons} ${data.number_of_seasons > 1 ? "Seasons" : "Season"}`}
+                {" | "}
+                {data.number_of_episodes > 0 &&
+                  `${data.number_of_episodes} ${data.number_of_episodes > 1 ? "Episodes" : "Episode"}`}
+              </p>
+              <div className="flex w-full flex-wrap items-center justify-center text-xs uppercase opacity-70">
+                {data.genres.slice(0, 3).map((v) => (
+                  <p className="px-2" key={v.id}>
+                    {v.name}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
+
           {data.tagline && (
             <p className="opacity-90">
               <em>{data.tagline}</em>
@@ -106,12 +108,12 @@ function TvListControlls({ tv, type }) {
   const isWatchList = data?.includes("watchlist");
   return (
     <div className="flex w-fit flex-col gap-5">
-      <div className="flex w-sm gap-4">
+      <div className="flex w-72 gap-4 sm:w-sm">
         <AddItemToList
           item={tv}
           type="tv"
           custom={true}
-          className={"btn btn-accent btn-lg flex-1"}
+          className={"btn btn-soft btn-lg flex-1"}
         />
         <SendItem
           className={"btn btn-primary btn-lg flex-3"}
