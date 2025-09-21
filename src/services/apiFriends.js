@@ -1,4 +1,3 @@
-import { getCurrentUser } from "./apiAuth";
 import supabase from "./supabase";
 
 export async function sendFriendRequest(user_id, friend_id) {
