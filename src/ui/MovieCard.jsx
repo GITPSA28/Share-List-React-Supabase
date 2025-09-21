@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
 
-export default function MovieCard({ movie, children, showOverView = true }) {
+export default function MovieCard({
+  movie,
+  type = "movie",
+  children,
+  showOverView = true,
+}) {
   const [overview, setOverview] = useState(
     () =>
       `${movie.overview?.substring(0, 60)}${movie.overview?.length > 60 ? "..." : ""}`,
@@ -31,12 +36,15 @@ export default function MovieCard({ movie, children, showOverView = true }) {
           <p className="wrap-anywhere">
             <Link
               className="cursor-pointer hover:text-[#40BCF4]"
-              to={`/movie/${movie.id}`}
+              to={`/${movie.itemType}/${movie.id}`}
             >
-              <span>{movie.title + " "}</span>
+              <span>
+                {type === "movie" && movie.title}
+                {type === "tv" && movie.name}
+              </span>
             </Link>
             <span className="font-mono text-xs opacity-70">
-              {movie.release_date?.split("-")[0]}
+              {movie.release_date && movie.release_date?.split("-")[0]}
             </span>
           </p>
         </div>
