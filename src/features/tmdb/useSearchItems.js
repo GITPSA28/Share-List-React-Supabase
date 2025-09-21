@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { searchMovies, searchTvs } from "../../services/apiTmdb";
 import { useSearchParams } from "react-router";
 
-export function useSearchMovies() {
+export function useSearchItems() {
   const [searchParams, SetSearchParams] = useSearchParams();
 
   // queryURI = encodeURI(query);
@@ -11,7 +11,7 @@ export function useSearchMovies() {
   //   console.log(query);
   const {
     isLoading,
-    data: movieResults,
+    data: itemResults,
     error,
   } = useQuery({
     queryKey: ["search-results", type, query],
@@ -26,6 +26,6 @@ export function useSearchMovies() {
   return {
     isLoading,
     error,
-    movieResults,
+    itemResults,
   };
 }
