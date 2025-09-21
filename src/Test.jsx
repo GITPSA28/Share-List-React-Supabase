@@ -23,9 +23,10 @@ function Test() {
       `,
         )
         .eq("items.type", "movie")
-        .or(
-          `and(owner_id.eq.${user.id},recommended_to.is.null),recommended_to.eq.${user.id}`,
-        )
+        .or(`recommended_to.eq.${user.id},recommended_to.is.null`)
+        // .or(
+        //   `and(owner_id.not.eq.${user.id},recommended_to.not.is.null),recommended_to.eq.${user.id}`,
+        // )
         .order("created_at", { ascending: false })
         .order("created_at", { foreignTable: "items", ascending: false });
       if (error) throw error;
