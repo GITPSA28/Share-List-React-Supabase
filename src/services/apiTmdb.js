@@ -25,6 +25,18 @@ export async function searchMovies({ query, page = 1, adult = false }) {
   let data = await res.json();
   return data;
 }
+export async function searchTvs({ query, page = 1, adult = false }) {
+  let baseURL = `https://api.themoviedb.org/3/search/tv?query=${query}&include_adult=${adult}&language=en-US&page=${page}`;
+  let res = await fetch(baseURL, {
+    method: "GET",
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${import.meta.env.VITE_TMDBAPI_ACCESS_TOKEN}`,
+    },
+  });
+  let data = await res.json();
+  return data;
+}
 
 export async function getMovieDetails({ movie_id }) {
   try {
