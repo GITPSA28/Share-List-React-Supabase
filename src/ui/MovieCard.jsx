@@ -36,7 +36,7 @@ export default function MovieCard({
           <p className="wrap-anywhere">
             <Link
               className="cursor-pointer hover:text-[#40BCF4]"
-              to={`/${movie.itemType}/${movie.id}`}
+              to={`/${type}/${movie.id}`}
             >
               <span>
                 {type === "movie" && movie.title}
