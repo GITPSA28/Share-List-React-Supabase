@@ -18,6 +18,7 @@ import ListPage from "./pages/ListPage";
 import MoviePage from "./pages/MoviePage";
 import { Toaster } from "react-hot-toast";
 import TvPage from "./pages/TVPage";
+import RecommendationsPage from "./pages/RecommendationsPage";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -46,6 +47,10 @@ function App() {
                 <Route path="search" element={<SearchPage />} />
                 <Route path="friends" element={<Friends />} />
                 <Route path="notifications" element={<NotificationPage />} />
+                <Route
+                  path="recommendations"
+                  element={<RecommendationsPage />}
+                />
                 <Route path="profile/:username" element={<Profile />} />
                 <Route path="list/:listid" element={<ListPage />} />
                 <Route path="movie/:movieid" element={<MoviePage />} />
