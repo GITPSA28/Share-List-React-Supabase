@@ -44,7 +44,7 @@ export default function MovieCard({
               </span>
             </Link>
             <span className="font-mono text-xs opacity-70">
-              {movie.release_date && movie.release_date?.split("-")[0]}
+              {movie.release_date && " " + movie.release_date?.split("-")[0]}
             </span>
           </p>
         </div>
