@@ -1,5 +1,17 @@
 import supabase from "./supabase";
 
+export async function getUsersRecommendations({ user_id, ascending = false }) {
+  const { data, error } = await supabase
+    .from("items")
+    .select(
+      `*,list:items_list_id_fkey!inner(list_id,list_name,recommended_to,owner_id,owner:profiles!lists_owner_id_fkey1(*))`,
+    )
+    .eq("list.recommended_to", user_id)
+    .order("created_at", { ascending });
+  if (error) throw error;
+  return data;
+}
+
 export async function addToUserList({
   list_type = "completed",
   value,
