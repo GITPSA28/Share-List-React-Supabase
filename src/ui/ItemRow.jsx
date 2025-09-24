@@ -25,16 +25,23 @@ export default function ItemRow({ item }) {
     <li className="list-row">
       <div>
         <img
-          className="w-20 rounded-sm"
+          className="w-24 rounded-sm"
           src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
         />
       </div>
       <div className="flex flex-col gap-1">
-        <div className="text-lg font-semibold hover:text-[#40BCF4]">
-          <Link to={`/${item.type}/${item.value}`}>
+        <div>
+          <Link
+            className="text-lg font-semibold hover:text-[#40BCF4]"
+            to={`/${item.type}/${item.value}`}
+          >
             {item.type === "tv" ? data.name : data.title}
           </Link>
+          <span className="font-mono text-xs opacity-70">
+            {data.release_date && " " + data.release_date?.split("-")[0]}
+          </span>
         </div>
+        <p className="text-base-content/70">{data.tagline && data.tagline}</p>
         <div className="mb-4 flex gap-2 text-xs uppercase">
           <Link
             className="flex items-center gap-1"
@@ -58,7 +65,7 @@ export default function ItemRow({ item }) {
             type={item.type}
           />
           <AddItemToList
-            className="btn btn-sm btn-soft btn-primary"
+            className="btn btn-sm btn-ghost"
             item={data}
             type={item.type}
           />
