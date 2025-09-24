@@ -34,7 +34,7 @@ export default function SetUserName() {
   return (
     <div className="flex h-dvh flex-col items-center justify-center">
       <fieldset className="fieldset">
-        <legend className="fieldset-legend">Set Username to Continue</legend>
+        <p className="fieldset-legend">Set Username to Continue</p>
         <UserName setUsername={setUsername} />
         <button
           disabled={username.length < 3}
