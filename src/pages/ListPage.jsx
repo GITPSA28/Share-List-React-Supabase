@@ -22,11 +22,11 @@ export default function ListPage() {
       }
     }
     getListDetails();
-  }, []);
+  }, [listid]);
   if (isLoading) return <FullscreenSpinner />;
   if (!list?.items?.length) return <div>Empty List</div>;
   return (
-    <div className="p-5">
+    <div className="p-5" key={listid}>
       <MovieList list={list} />
     </div>
   );
