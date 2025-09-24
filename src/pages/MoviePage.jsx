@@ -40,6 +40,7 @@ export default function MoviePage() {
             <a
               className="cursor-pointer hover:text-[#40BCF4]"
               href={`${data.homepage || "#"}`}
+              target="_blank"
             >
               {data.title + " "}
             </a>
