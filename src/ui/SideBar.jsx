@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import LogoIcon from "./LogoIcon";
 import SearchBar from "./SearchBar";
 import { Link, useLocation } from "react-router";
+import { getUserTableIdByListType } from "../services/apiUserList";
+import { useSession } from "../contexts/SessionContext";
 
 export default function SideBar() {
   return (
@@ -20,8 +22,31 @@ export default function SideBar() {
 }
 
 function SideBarLinks() {
+  const {
+    session: {
+      user: { id: user_id },
+    },
+  } = useSession();
+  const [listIds, setListIds] = useState({ watchListId: "", favouriteId: "" });
   const location = useLocation();
   const currentPath = location.pathname;
+  useEffect(() => {
+    async function getIds() {
+      const watchListIdRes = await getUserTableIdByListType(
+        user_id,
+        "watchlist",
+      );
+      const favouriteIdRes = await getUserTableIdByListType(
+        user_id,
+        "favourite",
+      );
+      setListIds({
+        watchListId: watchListIdRes || "",
+        favouriteId: favouriteIdRes || "",
+      });
+    }
+    getIds();
+  }, []);
   return (
     <ul className="menu w-full p-4">
       <li>
@@ -131,7 +156,7 @@ function SideBarLinks() {
           </summary>
           <ul>
             <li>
-              <a>
+              <Link to={`/list/${listIds.watchListId}`}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -147,10 +172,10 @@ function SideBarLinks() {
                   />
                 </svg>
                 Watchlist
-              </a>
+              </Link>
             </li>
             <li>
-              <a>
+              <Link to={`/list/${listIds.favouriteId}`}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -166,7 +191,7 @@ function SideBarLinks() {
                   />
                 </svg>
                 Favs
-              </a>
+              </Link>
             </li>
             <li>
               <a>All Lists</a>
