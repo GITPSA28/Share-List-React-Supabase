@@ -110,18 +110,25 @@ export async function getTvCredits({ tv_id }) {
     throw new Error(e.message);
   }
 }
-async function getMovies() {
-  let movieDetailsReq = items.map(async (movie) => {
-    let res = await fetch(
-      `https://api.themoviedb.org/3/movie/${movie.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
-    );
-    return res.json();
+
+export async function getTMDBDataFromList(items) {
+  let itemDetailsReq = items.map(async (item) => {
+    let res;
+    if (item.type === "movie") {
+      res = await fetch(
+        `https://api.themoviedb.org/3/movie/${item.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+      );
+    } else if (item.type === "tv") {
+      res = await fetch(
+        `https://api.themoviedb.org/3/tv/${item.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
+      );
+    }
+    let data = await res.json();
+    return { ...data, itemType: item.type };
   });
-  let movieDetailsRes = await Promise.allSettled(movieDetailsReq);
-  let movieDetails = movieDetailsRes
+  let itemDetailsRes = await Promise.allSettled(itemDetailsReq);
+  let itemDetails = itemDetailsRes
     .filter((res) => res.status === "fulfilled")
     .map((res) => res.value);
-  if (movieDetails.length > 0) {
-    setMovies(movieDetails);
-  }
+  return itemDetails;
 }
