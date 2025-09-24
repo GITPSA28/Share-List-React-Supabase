@@ -3,26 +3,12 @@ import { Link, useParams } from "react-router";
 import { getListById } from "../services/apiUserList";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import MovieCard from "../ui/MovieCard";
+import useListItemsDetails from "../features/tmdb/useListItemsDetails";
+import useListItems from "../features/lists/useListItems";
 
 export default function ListPage() {
   const { listid } = useParams();
-  const [list, setList] = useState([]);
-  const [isLoading, setisLoading] = useState(true);
-  useEffect(() => {
-    async function getListDetails() {
-      try {
-        setisLoading(true);
-        const data = await getListById({ list_id: listid });
-        setList(data);
-        console.log(data);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setisLoading(false);
-      }
-    }
-    getListDetails();
-  }, [listid]);
+  const { isLoading, list } = useListItems({ list_id: listid });
   if (isLoading) return <FullscreenSpinner />;
   if (!list?.items?.length) return <div>Empty List</div>;
   return (
@@ -33,34 +19,11 @@ export default function ListPage() {
 }
 
 function MovieList({ list }) {
-  const [listItems, setListItems] = useState([]);
-  const { items } = list;
-  useEffect(() => {
-    async function getItemData() {
-      let itemDetailsReq = items.map(async (item) => {
-        let res;
-        if (item.type === "movie") {
-          res = await fetch(
-            `https://api.themoviedb.org/3/movie/${item.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
-          );
-        } else if (item.type === "tv") {
-          res = await fetch(
-            `https://api.themoviedb.org/3/tv/${item.value}?api_key=${import.meta.env.VITE_TMDBAPI_KEY}`,
-          );
-        }
-        let data = await res.json();
-        return { ...data, itemType: item.type };
-      });
-      let itemDetailsRes = await Promise.allSettled(itemDetailsReq);
-      let itemDetails = itemDetailsRes
-        .filter((res) => res.status === "fulfilled")
-        .map((res) => res.value);
-      if (itemDetails.length > 0) {
-        setListItems(itemDetails);
-      }
-    }
-    getItemData();
-  }, []);
+  const { listItems, isLoading } = useListItemsDetails({
+    items: list.items,
+    list_id: list.id,
+  });
+  if (isLoading) return <FullscreenSpinner />;
   console.log(listItems);
   if (!listItems?.length) return <>Empty</>;
   return (
