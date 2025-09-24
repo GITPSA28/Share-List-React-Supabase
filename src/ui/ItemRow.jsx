@@ -25,17 +25,17 @@ export default function ItemRow({ item }) {
     <li className="list-row">
       <div>
         <img
-          className="w-15 rounded-sm"
+          className="w-20 rounded-sm"
           src={`https://image.tmdb.org/t/p/w500${data.poster_path}`}
         />
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         <div className="text-lg font-semibold hover:text-[#40BCF4]">
           <Link to={`/${item.type}/${item.value}`}>
             {item.type === "tv" ? data.name : data.title}
           </Link>
         </div>
-        <div className="flex gap-2 text-xs uppercase">
+        <div className="mb-4 flex gap-2 text-xs uppercase">
           <Link
             className="flex items-center gap-1"
             to={`/profile/${item.list.owner.username}`}
@@ -51,49 +51,18 @@ export default function ItemRow({ item }) {
             <em>{item.list.list_name} </em>
           </Link>
         </div>
-      </div>
-      <div className="flex flex-col">
-        <AddItemToList
-          className={"btn btn-square btn-sm btn-ghost"}
-          item={data}
-          type={item.type}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-info-icon lucide-info"
-          >
-            <path d="M5 12h14" />
-            <path d="M12 5v14" />
-          </svg>
-        </AddItemToList>
-        <SendItem
-          className={"btn btn-square btn-sm btn-ghost"}
-          item={data}
-          type={item.type}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-4"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
-            />
-          </svg>
-        </SendItem>
+        <div className="flex gap-2">
+          <SendItem
+            className="btn btn-sm btn-soft"
+            item={data}
+            type={item.type}
+          />
+          <AddItemToList
+            className="btn btn-sm btn-soft btn-primary"
+            item={data}
+            type={item.type}
+          />
+        </div>
       </div>
     </li>
   );
