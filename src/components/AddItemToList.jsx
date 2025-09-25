@@ -22,7 +22,7 @@ export default function AddItemToList({
         <AddToListContent type={type} item={item} custom={custom} />
       </Modal.ModalContent>
       <Modal.OpenModel
-        className={className ? className : "btn btn-sm btn-ghost"}
+        className={className ? className : "btn btn-sm btn-neutral btn-ghost"}
       >
         {children ? (
           children
