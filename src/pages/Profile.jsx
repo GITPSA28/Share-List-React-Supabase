@@ -67,13 +67,13 @@ function ProfileHeader({ userData }) {
     <div className="flex flex-col items-center gap-2">
       {userData?.avatar_url ? (
         <div className="avatar">
-          <div className="w-16 rounded-full sm:w-24">
+          <div className="w-24 rounded-full sm:w-32">
             <img referrerPolicy="no-referrer" src={userData?.avatar_url} />
           </div>
         </div>
       ) : (
         <div className="avatar avatar-placeholder">
-          <div className="bg-neutral text-neutral-content w-16 rounded-full sm:w-24">
+          <div className="bg-neutral text-neutral-content w-24 rounded-full sm:w-32">
             <span className="text-xl font-semibold">
               {userData.username.charAt(0).toUpperCase()}
             </span>
