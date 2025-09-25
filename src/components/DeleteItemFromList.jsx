@@ -5,13 +5,13 @@ import { useDeleteItem } from "../features/lists/useDeleteItem";
 export default function DeleteItemFromList({
   className,
   children,
-  item,
+  item_id,
   title = "",
 }) {
   return (
     <Modal>
       <Modal.ModalContent className={"text-base-content bg-base-100"}>
-        <DeleteContent item={item} title={title} />
+        <DeleteContent item_id={item_id} title={title} />
       </Modal.ModalContent>
       <Modal.OpenModel
         className={
@@ -43,11 +43,8 @@ export default function DeleteItemFromList({
   );
 }
 
-function DeleteContent({ title, item }) {
-  const { deleteItem, isDeleting } = useDeleteItem({
-    item: item.value,
-    list_id: item.list_id,
-  });
+function DeleteContent({ title, item_id }) {
+  const { deleteItem, isDeleting } = useDeleteItem({ item_id });
   return (
     <>
       <p>
