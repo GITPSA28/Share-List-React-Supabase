@@ -30,8 +30,8 @@ export default function TvPage() {
       {!isLoading && !data && <p>No data</p>}
       {!isLoading && error && <p>Error while getting the title</p>}
       {data && (
-        <div className="flex max-w-xl flex-col items-center gap-5">
-          <div className="w-full max-w-lg">
+        <div className="flex max-w-3xl flex-col items-center gap-5">
+          <div className="w-full max-w-3xl">
             {(data.backdrop_path || data.poster_path) && <TvCard tv={data} />}
           </div>
           <h2 className="gap-1 text-2xl font-bold sm:text-3xl">
@@ -449,7 +449,7 @@ function TvCard({ tv }) {
       )} */}
       {tv.poster_path && (
         <img
-          className="rounded-box z-10 w-26 mask-none shadow-md sm:w-32"
+          className="rounded-box z-10 w-26 mask-none shadow-md sm:w-32 md:w-40 lg:w-48"
           src={`https://image.tmdb.org/t/p/w500${tv.poster_path}`}
         />
       )}
