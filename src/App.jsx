@@ -19,6 +19,7 @@ import MoviePage from "./pages/MoviePage";
 import { Toaster } from "react-hot-toast";
 import TvPage from "./pages/TVPage";
 import RecommendationsPage from "./pages/RecommendationsPage";
+import ScrollToTop from "./ui/ScrollToTop";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -32,6 +33,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <SessionProvider>
+            <ScrollToTop />
             <Routes>
               <Route
                 element={
