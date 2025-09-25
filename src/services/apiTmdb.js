@@ -124,7 +124,7 @@ export async function getTMDBDataFromList(items) {
       );
     }
     let data = await res.json();
-    return { ...data, itemType: item.type };
+    return { ...data, itemType: item.type, itemId: item.id };
   });
   let itemDetailsRes = await Promise.allSettled(itemDetailsReq);
   let itemDetails = itemDetailsRes
