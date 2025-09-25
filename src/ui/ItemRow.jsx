@@ -5,23 +5,14 @@ import { Link } from "react-router";
 import Avatar from "../ui/Avatar";
 import SendItem from "../components/SendItem";
 import DeleteItemFromList from "../components/DeleteItemFromList";
+import useItemDetails from "../features/tmdb/useItemDetails";
 export default function ItemRow({ item }) {
-  const [data, setData] = useState();
-  const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    async function getDetails() {
-      let details;
-      if (item.type === "tv") {
-        details = await getTvDetails({ tv_id: item.value });
-      } else if (item.type === "movie") {
-        details = await getMovieDetails({ movie_id: item.value });
-      }
-      setData(details);
-      setIsLoading(false);
-    }
-    getDetails();
-  }, []);
+  const { data, isLoading } = useItemDetails({
+    value: item.value,
+    type: item.type,
+  });
   if (isLoading) return;
+  if (!data) return;
   return (
     <li className="list-row">
       <div>
@@ -71,7 +62,7 @@ export default function ItemRow({ item }) {
             type={item.type}
           />
           <DeleteItemFromList
-            item={item}
+            item_id={item.id}
             title={item.type === "tv" ? data.name : data.title}
           />
         </div>
