@@ -24,7 +24,8 @@ function Test() {
         )
         .or(`recommended_to.eq.${user.id},recommended_to.is.null`)
         .order("updated_at", { ascending: false })
-        .order("created_at", { referencedTable: "items", ascending: false });
+        .order("created_at", { referencedTable: "items", ascending: false })
+        .range(0, 5, { referencedTable: "items" });
       if (error) throw error;
       console.log(listsResult);
       setLists(listsResult);
