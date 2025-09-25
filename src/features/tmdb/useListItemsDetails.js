@@ -6,14 +6,17 @@ export default function useListItemsDetails({ items, list_id }) {
     isLoading,
     data: listItems,
     error,
+    isRefetching,
   } = useQuery({
-    queryKey: ["list-details", list_id],
+    queryKey: ["list", "details", list_id],
     queryFn: () => getTMDBDataFromList(items),
+    retry: false,
   });
 
   return {
     isLoading,
     error,
     listItems,
+    isRefetching,
   };
 }
