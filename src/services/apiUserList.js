@@ -85,7 +85,7 @@ export async function insertItemsFromListIds({
   return data;
 }
 
-export async function getListById({ list_id }) {
+export async function getListById({ list_id, ascending = false }) {
   if (!list_id) return;
   const { data, error } = await supabase
     .from("lists")
@@ -97,7 +97,8 @@ export async function getListById({ list_id }) {
         avatar_url
       )`,
     )
-    .eq("list_id", list_id);
+    .eq("list_id", list_id)
+    .order("created_at", { referencedTable: "items", ascending });
   if (error) throw error;
   if (data.length < 1) return [];
   return data[0];
