@@ -4,6 +4,7 @@ import { getMovieDetails, getTvDetails } from "../services/apiTmdb";
 import { Link } from "react-router";
 import Avatar from "../ui/Avatar";
 import SendItem from "../components/SendItem";
+import DeleteItemFromList from "../components/DeleteItemFromList";
 export default function ItemRow({ item }) {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(true);
@@ -68,6 +69,10 @@ export default function ItemRow({ item }) {
             className="btn btn-sm btn-ghost"
             item={data}
             type={item.type}
+          />
+          <DeleteItemFromList
+            item={item}
+            title={item.type === "tv" ? data.name : data.title}
           />
         </div>
       </div>

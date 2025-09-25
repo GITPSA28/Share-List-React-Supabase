@@ -150,4 +150,12 @@ export async function deleteItemFromList({ item, list_id }) {
   if (error) throw error;
   return true;
 }
+export async function deleteItemUsingId({ item_id }) {
+  const { error } = await supabase
+    .from("items")
+    .delete({ count: 1 })
+    .eq("id", item_id);
+  if (error) throw error;
+  return true;
+}
 //lists_owner_id_fkey1
