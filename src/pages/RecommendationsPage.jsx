@@ -8,8 +8,10 @@ export default function RecommendationsPage() {
   if (isLoading) return <FullscreenSpinner />;
   if (!items) return <p>Empty</p>;
   return (
-    <div>
-      <ItemsListView items={items} title="Recommendations to you" />
+    <div className="flex justify-center">
+      <div className="max-w-2xl">
+        <ItemsListView items={items} title="Recommendations to you" />
+      </div>
     </div>
   );
 }
