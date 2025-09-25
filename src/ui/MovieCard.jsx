@@ -14,12 +14,12 @@ export default function MovieCard({
 
   return (
     <div
-      className={`card ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : "bg-base-100"} image-full h-full w-full shadow-sm`}
+      className={`card group ${!movie.backdrop_path ? "bg-neutral text-neutral-conten" : "bg-base-100"} image-full h-full w-full shadow-sm`}
     >
       <figure className="">
         {movie.backdrop_path && (
           <img
-            className="w-full object-cover"
+            className="w-full object-cover group-hover:[filter:brightness(38%)!important]"
             src={`https://image.tmdb.org/t/p/w780${movie.backdrop_path}`}
             alt="Shoes"
           />
@@ -27,10 +27,12 @@ export default function MovieCard({
       </figure>
       <div className="card-body hover:inset-shadow-primary movie-list">
         {movie.poster_path && (
-          <img
-            className="z-10 w-20 rounded-sm sm:w-28"
-            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          />
+          <Link className="w-fit cursor-pointer" to={`/${type}/${movie.id}`}>
+            <img
+              className="z-10 w-20 rounded-sm sm:w-28"
+              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+            />
+          </Link>
         )}
         <div className="card-title items-end gap-1 text-lg font-bold">
           <p className="wrap-anywhere">
