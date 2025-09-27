@@ -20,6 +20,7 @@ import { Toaster } from "react-hot-toast";
 import TvPage from "./pages/TVPage";
 import RecommendationsPage from "./pages/RecommendationsPage";
 import ScrollToTop from "./ui/ScrollToTop";
+import MyLists from "./pages/MyLists";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -58,6 +59,8 @@ function App() {
                 <Route path="movie/:movieid" element={<MoviePage />} />
                 <Route path="tv/:tvid" element={<TvPage />} />
                 <Route path="settings" element={<Settings />} />
+                <Route path="mylists" element={<MyLists />} />
+                <Route path="myrecommendations" element={<MyLists />} />
               </Route>
               <Route path="login" element={<Login />} />
               <Route path="setusername" element={<SetUserName />} />
