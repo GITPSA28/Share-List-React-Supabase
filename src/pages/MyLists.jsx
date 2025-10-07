@@ -3,6 +3,7 @@ import useUserLists from "../features/lists/useUserLists";
 import useUserId from "../features/authentication/useUserId";
 import Spinner from "../ui/Spinner";
 import { Link } from "react-router";
+import { useCreateList } from "../features/lists/useCreateList";
 
 export default function MyLists() {
   const { user_id } = useUserId();
@@ -25,6 +26,7 @@ export default function MyLists() {
                   </Link>
                 </div>
                 <ListVisibilityControll
+                  disabled={true}
                   onChange={(e) => console.log(e.target.value)}
                   defaultValue={list.visibility}
                 />
@@ -32,7 +34,7 @@ export default function MyLists() {
             );
           })}
           <li className="list-row">
-            <CreateList />
+            <CreateList user_id={user_id} />
           </li>
         </ul>
       )}
@@ -40,39 +42,48 @@ export default function MyLists() {
   );
 }
 
-function CreateList() {
+function CreateList({ user_id }) {
   const [listName, setListName] = useState("");
   const [listVisibility, setListVisibility] = useState("friends");
+  const { createNewList, isCreating } = useCreateList({ owner_id: user_id });
   function handleCreate() {
-    console.log(listName, listVisibility);
+    createNewList({ list_name: listName, visibility: listVisibility });
+    setListName("");
   }
   return (
     <>
       <input
         type="text"
         value={listName}
+        disabled={isCreating}
         onChange={(e) => setListName(e.target.value)}
         placeholder="New List Name..."
         className="input input-sm list-col-grow"
       />
       <ListVisibilityControll
         value={listVisibility}
+        disabled={isCreating}
         onChange={(e) => setListVisibility(e.target.value)}
       />
-      <button onClick={handleCreate} className="btn btn-sm btn-soft">
+      <button
+        disabled={isCreating}
+        onClick={handleCreate}
+        className="btn btn-sm btn-soft"
+      >
         Create
       </button>
     </>
   );
 }
 
-function ListVisibilityControll({ value, defaultValue, onChange }) {
+function ListVisibilityControll({ value, defaultValue, onChange, disabled }) {
   return (
     <select
       name="visibility"
       value={value}
       defaultValue={defaultValue}
       onChange={onChange}
+      disabled={disabled}
       className="select select-sm"
     >
       <option disabled={true}>List Visibility</option>
