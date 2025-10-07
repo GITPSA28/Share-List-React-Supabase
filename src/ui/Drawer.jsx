@@ -1,5 +1,4 @@
 import React from "react";
-import { useUser } from "../features/authentication/useUser";
 import Spinner from "./Spinner";
 import SideBar from "./SideBar";
 import NavBar from "./NavBar";

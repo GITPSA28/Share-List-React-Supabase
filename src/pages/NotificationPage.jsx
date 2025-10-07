@@ -2,17 +2,16 @@ import React from "react";
 import { useFriends } from "../features/friends/useFriends";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import UserItem from "../ui/UserItem";
-import { useUser } from "../features/authentication/useUser";
 import ManageFriendship from "../components/ManageFriendship";
-import { useSession } from "../contexts/SessionContext";
+import useUserId from "../features/authentication/useUserId";
 
 export default function NotificationPage() {
-  const { userProfile: user, isLoading } = useSession();
-  if (isLoading) return <FullscreenSpinner />;
+  const { user_id } = useUserId();
+  if (!user_id) return <FullscreenSpinner />;
   return (
     <div className="bg-base-100 flex flex-col items-center pt-10">
       <div className="max-w-xl min-w-72 pt-3 sm:min-w-sm">
-        {user && <Notifications user_id={user.id} />}
+        {user_id && <Notifications user_id={user_id} />}
       </div>
     </div>
   );
