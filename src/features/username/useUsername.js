@@ -1,14 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { getUserProfileData } from "../../services/apiProfile";
+import { useSession } from "../../contexts/SessionContext";
 
 export function useUsername() {
-  const { isLoading, data: profile } = useQuery({
-    queryKey: ["user-profile"],
-    queryFn: getUserProfileData,
-  });
+  const { userProfile: profile, isLoading } = useSession();
   return {
     isLoading,
     profile,
-    hasUsername: profile?.username !== null,
+    hasUsername: profile?.username?.length > 2,
   };
 }
