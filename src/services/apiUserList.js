@@ -167,4 +167,16 @@ export async function createList({ visibility, list_name, owner_id }) {
   if (error) throw error;
   return data;
 }
+export async function updateList({ list_name, visibility, list_id }) {
+  if (!list_name && !visibility) return;
+  let payload = {};
+  if (list_name) payload.list_name = list_name;
+  if (visibility) payload.visibility = visibility;
+  const { error } = await supabase
+    .from("lists")
+    .update(payload)
+    .eq("list_id", list_id);
+  if (error) throw error;
+  return true;
+}
 //lists_owner_id_fkey1
