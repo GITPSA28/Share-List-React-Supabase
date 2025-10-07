@@ -60,7 +60,7 @@ function App() {
                 <Route path="tv/:tvid" element={<TvPage />} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="mylists" element={<MyLists />} />
-                <Route path="myrecommendations" element={<MyLists />} />
+                {/* <Route path="myrecommendations" element={<MyLists />} />*/}
               </Route>
               <Route path="login" element={<Login />} />
               <Route path="setusername" element={<SetUserName />} />
