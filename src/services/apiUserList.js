@@ -159,4 +159,12 @@ export async function deleteItemUsingId({ item_id }) {
   if (error) throw error;
   return true;
 }
+export async function createList({ visibility, list_name, owner_id }) {
+  const { data, error } = await supabase
+    .from("lists")
+    .insert([{ owner_id, list_name, list_type: "custom", visibility }])
+    .select();
+  if (error) throw error;
+  return data;
+}
 //lists_owner_id_fkey1
