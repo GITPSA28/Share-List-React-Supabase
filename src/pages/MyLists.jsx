@@ -4,6 +4,7 @@ import useUserId from "../features/authentication/useUserId";
 import Spinner from "../ui/Spinner";
 import { Link } from "react-router";
 import { useCreateList } from "../features/lists/useCreateList";
+import { useUpdateList } from "../features/lists/useUpdateList";
 
 export default function MyLists() {
   const { user_id } = useUserId();
@@ -25,11 +26,7 @@ export default function MyLists() {
                     </div>
                   </Link>
                 </div>
-                <ListVisibilityControll
-                  disabled={true}
-                  onChange={(e) => console.log(e.target.value)}
-                  defaultValue={list.visibility}
-                />
+                <UpdateList list={list} />
               </li>
             );
           })}
@@ -41,7 +38,21 @@ export default function MyLists() {
     </div>
   );
 }
-
+function UpdateList({ list }) {
+  const { isUpdating, updateListDetails } = useUpdateList({
+    list_id: list.list_id,
+  });
+  function handleVisibilityUpdate(visibility) {
+    updateListDetails({ visibility });
+  }
+  return (
+    <ListVisibilityControll
+      disabled={isUpdating}
+      onChange={(e) => handleVisibilityUpdate(e.target.value)}
+      defaultValue={list.visibility}
+    />
+  );
+}
 function CreateList({ user_id }) {
   const [listName, setListName] = useState("");
   const [listVisibility, setListVisibility] = useState("friends");
