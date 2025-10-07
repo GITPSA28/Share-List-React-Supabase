@@ -8,7 +8,7 @@ export function useUser() {
   } = useSession();
   const { isLoading, data: user } = useQuery({
     queryKey: ["user"],
-    queryFn: () => {
+    queryFn: async () => {
       return userData;
     },
   });

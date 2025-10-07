@@ -25,12 +25,18 @@ export const SessionProvider = ({ children }) => {
     const authStateListener = supabase.auth.onAuthStateChange(
       async (_, session) => {
         // console.log("dss", session);
-        if (session?.user)
+        if (session?.user) {
+          setIsLoading(true);
           getUserProfileData({
             id: session.user.id,
-          }).then((userProfileData) => serUserProfile(userProfileData));
+          }).then((userProfileData) => {
+            serUserProfile(userProfileData);
+            setIsLoading(false);
+          });
+        } else {
+          setIsLoading(false);
+        }
         setSession(session);
-        setIsLoading(false);
       },
     );
 

@@ -1,14 +1,15 @@
 import supabase from "./supabase";
 
 export async function getUserProfileData({ id }) {
-  console.log("working");
   if (!id) {
+    console.log("working");
     const { data: session } = await supabase.auth.getSession();
     if (!session.session) return null;
-    const { data: userData, error } = await supabase.auth.getUser();
-    id = userData.user.id;
+    id = session.user.id;
+    // const { data: userData, error } = await supabase.auth.getUser();
+    // id = userData.user.id;
+    console.log(id);
   }
-  console.log(id);
   const { data, error } = await supabase
     .from("profiles")
     .select("*")
