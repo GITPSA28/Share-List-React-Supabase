@@ -5,6 +5,7 @@ export default function useUserId() {
     session: {
       user: { id: user_id },
     },
+    isLoading,
   } = useSession();
-  return user_id;
+  return { user_id, isLoading };
 }
