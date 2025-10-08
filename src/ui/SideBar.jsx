@@ -165,7 +165,7 @@ function SideBarLinks() {
                 My Lists
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 className={
                   currentPath === "/myrecommendations" ? "menu-active" : ""
@@ -174,7 +174,7 @@ function SideBarLinks() {
               >
                 My Recommendations
               </Link>
-            </li>
+            </li> */}
           </ul>
         </details>
       </li>
