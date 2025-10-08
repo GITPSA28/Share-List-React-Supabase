@@ -2,6 +2,7 @@ import React from "react";
 import LogoIcon from "./LogoIcon";
 import { Link } from "react-router";
 import ThemeController from "./ThemeController";
+import NotificationBadge from "./NotificationBadge";
 // import SearchBar from "./SearchBar";
 
 export default function NavBar({ user }) {
@@ -30,7 +31,9 @@ export default function NavBar({ user }) {
             </svg>
           </label>
           <LogoIcon className="fill-base-content h-6 w-6 sm:h-9 sm:w-9 lg:hidden" />
-          <a className="text-lg font-bold sm:text-2xl lg:hidden">Share List</a>
+          <Link to="/home" className="text-lg font-bold sm:text-2xl lg:hidden">
+            Share List
+          </Link>
           {/* <div className="hidden lg:block">
               <SearchBar />
             </div> */}
@@ -78,7 +81,7 @@ export default function NavBar({ user }) {
                   d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
                 />{" "}
               </svg>
-              <span className="badge badge-xs badge-primary indicator-item"></span>
+              <NotificationBadge />
             </div>
           </Link>
           <div className="dropdown dropdown-end ml-2">
