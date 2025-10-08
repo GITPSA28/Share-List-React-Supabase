@@ -30,8 +30,8 @@ const queryClient = new QueryClient({
 });
 function App() {
   return (
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
         <BrowserRouter>
           <SessionProvider>
             <ScrollToTop />
@@ -89,8 +89,8 @@ function App() {
             },
           }}
         />
-      </QueryClientProvider>
-    </ThemeProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 

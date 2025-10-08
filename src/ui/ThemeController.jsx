@@ -40,7 +40,7 @@ const allThemes = [
 ];
 
 export default function ThemeController({ themes = allThemes }) {
-  const { theme, handleThemeChange } = useTheme();
+  const { theme, handleThemeChange, isUpdating } = useTheme();
   // console.log(theme, setTheme);
   const handleChange = (e) => {
     handleThemeChange(e.target.value);
@@ -66,6 +66,7 @@ export default function ThemeController({ themes = allThemes }) {
             <li key={th} className="px-1">
               <input
                 type="radio"
+                disabled={isUpdating}
                 name="theme-dropdown"
                 className={`theme-controller ${theme === th ? "btn-primary" : "btn-ghost"} btn btn-sm btn-block justify-start`}
                 aria-label={th.charAt(0).toUpperCase() + th.slice(1)}

@@ -28,7 +28,10 @@ export default function Profile() {
 
   // console.log(userData.id);
   return (
-    <div className="bg-base-100 flex flex-col items-center justify-center gap-5 pt-8">
+    <div
+      className="bg-base-100 rounded-box mt-5 flex flex-col items-center justify-center gap-5 py-8"
+      data-theme={userData?.theme}
+    >
       <div className="flex flex-col gap-5 sm:w-full sm:max-w-xl">
         {(isLoading || !username || !userData) && <FullscreenSpinner />}
         {userData && (
@@ -41,6 +44,7 @@ export default function Profile() {
                 <>
                   <ManageFriendship.AddFriend />
                   <ManageFriendship.CancelRequest />
+                  <ManageFriendship.Delete />
                   <div className="join-horizontal flex">
                     <div className="join-item">
                       <ManageFriendship.Accept />

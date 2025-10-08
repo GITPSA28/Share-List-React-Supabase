@@ -29,21 +29,22 @@ export async function checkUsernameExists({ input }) {
   return data.length > 0;
 }
 
-export async function updateUserProfile({ username }) {
+export async function updateUserProfile({ username, theme }) {
   let updateData;
-  if (username) updateData = { data: { username } };
+  if (username) updateData = { username };
+  if (theme) updateData = { ...updateData, theme };
   const { data: userData, error: sessionError } = await supabase.auth.getUser();
   if (sessionError) throw sessionError;
   let id = userData.user.id;
   const { data, error } = await supabase
     .from("profiles")
-    .update({ username: username })
+    .update(updateData)
     .eq("id", id)
     .select();
 
   if (error) throw error;
   console.log(data);
-  return data;
+  return data[0];
 }
 
 export async function searchUsers(input) {
