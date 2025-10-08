@@ -3,7 +3,7 @@ import UserName from "../ui/UserName";
 import { useUpdateUserProfile } from "../features/username/useUpdateUserProfile";
 import Logout from "../features/authentication/Logout";
 import { useNavigate } from "react-router";
-import { useUsername } from "../features/username/useUserName";
+import { useUsername } from "../features/username/useUsername";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
 import { useSession } from "../contexts/SessionContext";
 

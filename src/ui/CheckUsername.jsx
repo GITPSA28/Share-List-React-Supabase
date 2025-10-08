@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router";
 import { useEffect } from "react";
-import { useUsername } from "../features/username/useUserName";
 import FullscreenSpinner from "./FullscreenSpinner";
 import { useSession } from "../contexts/SessionContext";
 
