@@ -1,9 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateUserProfile } from "../../services/apiProfile";
 
-export function useUpdateUsername() {
+export function useUpdateUserProfile() {
   const queryClient = useQueryClient();
-  const { isLoading: isUpdating, mutate: updateUsername } = useMutation({
+  const { isLoading: isUpdating, mutate: updateUserProfileData } = useMutation({
     mutationFn: updateUserProfile,
     onSuccess: ({ data }) => {
       console.log("User account updated successfuly");
@@ -13,5 +13,5 @@ export function useUpdateUsername() {
       toast.error(error.message);
     },
   });
-  return { isUpdating, updateUsername };
+  return { isUpdating, updateUserProfileData };
 }

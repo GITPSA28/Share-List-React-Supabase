@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import UserName from "../ui/UserName";
-import { useUpdateUsername } from "../features/username/useUpdateUsername";
+import { useUpdateUserProfile } from "../features/username/useUpdateUserProfile";
 import Logout from "../features/authentication/Logout";
 import { useNavigate } from "react-router";
 import { useUsername } from "../features/username/useUserName";
 import FullscreenSpinner from "../ui/FullscreenSpinner";
+import { useSession } from "../contexts/SessionContext";
 
 export default function SetUserName() {
   const [username, setUsername] = useState("");
-  const { isUpdating, updateUsername } = useUpdateUsername();
+  const { isUpdating, updateUserProfileData } = useUpdateUserProfile();
   const { hasUsername, isLoading } = useUsername();
+  const { setUserProfile } = useSession();
   const navigate = useNavigate();
   useEffect(
     function () {
@@ -21,10 +23,11 @@ export default function SetUserName() {
   );
 
   function handleSubmit() {
-    updateUsername(
+    updateUserProfileData(
       { username },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          setUserProfile(data);
           navigate("/home", { replace: true });
         },
       },
