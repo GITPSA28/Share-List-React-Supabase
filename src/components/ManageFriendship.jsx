@@ -6,6 +6,7 @@ import {
   sendFriendRequest,
 } from "../services/apiFriends";
 import { useSession } from "../contexts/SessionContext";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ManageFriendShipContext = createContext();
 
@@ -162,6 +163,49 @@ function CancelRequest({ children, className = null }) {
     </ManageFriendRequestButton>
   );
 }
+function Delete({ children, className = null }) {
+  const {
+    friend_id,
+    user_id,
+    friendship,
+    isFriendshipLoading: isLoading,
+    refetchFriendship,
+  } = useContext(ManageFriendShipContext);
+  const isVisible =
+    friend_id != user_id &&
+    friendship?.status === "accepted" &&
+    (friendship?.friend_id === user_id || friendship?.user_id === user_id);
+  if (!isVisible) return null;
+  return (
+    <ManageFriendRequestButton
+      className={className ?? "btn-soft btn btn-error btn-sm"}
+      friend_id={friend_id}
+      onStatusChange={refetchFriendship}
+      isLoading={isLoading}
+      type={"Reject"}
+    >
+      {children ?? (
+        <>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="size-4"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+            />
+          </svg>
+          Remove Friend
+        </>
+      )}
+    </ManageFriendRequestButton>
+  );
+}
 function Reject({ children, className = null }) {
   const {
     friend_id,
@@ -219,6 +263,7 @@ function ManageFriendRequestButton({
       user: { id: user_id },
     },
   } = useSession();
+  const queryClient = useQueryClient();
   async function handleFriendRequestUpdate(e) {
     e.preventDefault();
     try {
@@ -238,6 +283,7 @@ function ManageFriendRequestButton({
           res = null;
           break;
       }
+      queryClient.invalidateQueries(["friends"]);
     } catch (e) {
       console.log(e);
     } finally {
@@ -264,5 +310,6 @@ ManageFriendship.AddFriend = AddFriend;
 ManageFriendship.Accept = Accept;
 ManageFriendship.CancelRequest = CancelRequest;
 ManageFriendship.Reject = Reject;
+ManageFriendship.Delete = Delete;
 
 export default ManageFriendship;

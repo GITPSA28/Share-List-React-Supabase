@@ -18,7 +18,10 @@ export default function MyLists() {
         <ul className="list bg-base-100 rounded-box w-full max-w-xl shadow-md">
           {lists.map((list) => {
             return (
-              <li key={list.id} className="list-row items-center">
+              <li
+                key={list.id}
+                className="list-row items-center text-xs sm:text-sm"
+              >
                 <div></div>
                 <div>
                   <Link to={`/list/${list.list_id}`}>
@@ -28,7 +31,13 @@ export default function MyLists() {
                   </Link>
                 </div>
                 <UpdateList list={list} />
-                <DeleteList list_id={list.list_id} list_name={list.list_name} />
+                <DeleteList
+                  className={
+                    "btn btn-xs sm:btn-sm btn-soft btn-circle btn-error"
+                  }
+                  list_id={list.list_id}
+                  list_name={list.list_name}
+                />
               </li>
             );
           })}
@@ -71,7 +80,7 @@ function CreateList({ user_id }) {
         disabled={isCreating}
         onChange={(e) => setListName(e.target.value)}
         placeholder="New List Name..."
-        className="input input-sm list-col-grow"
+        className="input input-xs sm:input-sm list-col-grow"
       />
       <ListVisibilityControll
         value={listVisibility}
@@ -81,7 +90,7 @@ function CreateList({ user_id }) {
       <button
         disabled={isCreating}
         onClick={handleCreate}
-        className="btn btn-sm btn-soft"
+        className="btn btn-xs sm:btn-sm btn-soft"
       >
         Create
       </button>
@@ -97,7 +106,7 @@ function ListVisibilityControll({ value, defaultValue, onChange, disabled }) {
       defaultValue={defaultValue}
       onChange={onChange}
       disabled={disabled}
-      className="select select-sm"
+      className="select select-xs sm:select-sm"
     >
       <option disabled={true}>List Visibility</option>
       <option value={"private"}>&#128274; Private</option>
