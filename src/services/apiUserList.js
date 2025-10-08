@@ -179,4 +179,13 @@ export async function updateList({ list_name, visibility, list_id }) {
   if (error) throw error;
   return true;
 }
+export async function deleteList({ list_id }) {
+  if (!list_id) return;
+  const { error } = await supabase
+    .from("lists")
+    .delete()
+    .eq("list_id", list_id);
+  if (error) throw error;
+  return true;
+}
 //lists_owner_id_fkey1
