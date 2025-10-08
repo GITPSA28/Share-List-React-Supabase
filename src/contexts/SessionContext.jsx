@@ -18,7 +18,7 @@ export const useSession = () => {
 
 export const SessionProvider = ({ children }) => {
   const [session, setSession] = useState(null);
-  const [userProfile, serUserProfile] = useState(null);
+  const [userProfile, setUserProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export const SessionProvider = ({ children }) => {
           getUserProfileData({
             id: session.user.id,
           }).then((userProfileData) => {
-            serUserProfile(userProfileData);
+            setUserProfile(userProfileData);
             setIsLoading(false);
           });
         } else {
@@ -46,7 +46,9 @@ export const SessionProvider = ({ children }) => {
   }, [supabase]);
 
   return (
-    <SessionContext.Provider value={{ session, userProfile, isLoading }}>
+    <SessionContext.Provider
+      value={{ session, userProfile, isLoading, setUserProfile }}
+    >
       {isLoading ? <FullscreenSpinner /> : children}
     </SessionContext.Provider>
   );
