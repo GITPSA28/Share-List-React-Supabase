@@ -5,6 +5,7 @@ import Spinner from "../ui/Spinner";
 import { Link } from "react-router";
 import { useCreateList } from "../features/lists/useCreateList";
 import { useUpdateList } from "../features/lists/useUpdateList";
+import DeleteList from "../components/DeleteList";
 
 export default function MyLists() {
   const { user_id } = useUserId();
@@ -27,6 +28,7 @@ export default function MyLists() {
                   </Link>
                 </div>
                 <UpdateList list={list} />
+                <DeleteList list_id={list.list_id} list_name={list.list_name} />
               </li>
             );
           })}
