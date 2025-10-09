@@ -1,6 +1,6 @@
 {
-  "name": "",
-  "short_name": "",
+  "name": "Share List App",
+  "short_name": "Share List",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
