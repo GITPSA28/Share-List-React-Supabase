@@ -31,13 +31,15 @@ export default function MyLists() {
                   </Link>
                 </div>
                 <UpdateList list={list} />
-                <DeleteList
-                  className={
-                    "btn btn-xs sm:btn-sm btn-soft btn-circle btn-error"
-                  }
-                  list_id={list.list_id}
-                  list_name={list.list_name}
-                />
+                {list.list_type === "custom" && (
+                  <DeleteList
+                    className={
+                      "btn btn-xs sm:btn-sm btn-soft btn-circle btn-error"
+                    }
+                    list_id={list.list_id}
+                    list_name={list.list_name}
+                  />
+                )}
               </li>
             );
           })}
