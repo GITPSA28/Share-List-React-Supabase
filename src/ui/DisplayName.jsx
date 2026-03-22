@@ -1,8 +1,8 @@
-import {useState } from "react";
-import { checkUsernameExists, updateUserProfile} from "../services/apiProfile";
+import { useState } from "react";
+import { updateUserProfile } from "../services/apiProfile";
 import Spinner from "./Spinner";
 
-export default function UserName({ setUsername }) {
+export default function DisplayName({ setDisplayName }) {
   const [value, setValue] = useState("");
   const [result, setResult] = useState({ status: "initial", value: "" });
   const [isLoading, setIsLoading] = useState(false);
@@ -10,24 +10,20 @@ export default function UserName({ setUsername }) {
     console.log(e);
     setIsLoading(true);
     e.preventDefault();
-    const data = await checkUsernameExists({ input: value });
-    if (data) {
-      setUsername("");
+    const updatedData = await updateUserProfile({ full_name: value });
+    if (updatedData) {
+      setDisplayName(value);
       setResult({
-        status: "error",
-        value: "This username isn't available. Please try another.",
+        status: "success",
+        value: "Display name updated successfully",
       });
     } else {
-      const updatedData = await updateUserProfile({username:value})
-      if(updatedData){
-        setUsername(value);
-        setResult({ status: "success", value: "Username updated successfully" });
-      }
-      else{
-        setResult({ status: "error", value: "Error while updating the Username" });
-      }
+      setResult({
+        status: "error",
+        value: "Error while updating the Display name",
+      });
     }
-    console.log(data);
+    console.log(updatedData);
     setIsLoading(false);
   }
 
@@ -56,13 +52,11 @@ export default function UserName({ setUsername }) {
               disabled={isLoading}
               type="text"
               value={value}
-              onChange={(e) => setValue(e.target.value.toLocaleLowerCase())}
+              onChange={(e) => setValue(e.target.value)}
               required
-              placeholder="Username"
-              pattern="[A-Za-z][A-Za-z0-9_]*"
+              placeholder="Display Name"
               minLength="3"
               maxLength="30"
-              title="Only letters, numbers or dash"
             />
           </label>
 

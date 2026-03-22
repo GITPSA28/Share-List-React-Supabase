@@ -29,10 +29,12 @@ export async function checkUsernameExists({ input }) {
   return data.length > 0;
 }
 
-export async function updateUserProfile({ username, theme }) {
+export async function updateUserProfile({ username, full_name, theme }) {
   let updateData;
   if (username) updateData = { username };
   if (theme) updateData = { ...updateData, theme };
+  if (full_name) updateData = { ...updateData, full_name };
+  updateData = { ...updateData, updated_at: new Date() };
   const { data: userData, error: sessionError } = await supabase.auth.getUser();
   if (sessionError) throw sessionError;
   let id = userData.user.id;
