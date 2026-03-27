@@ -16,6 +16,7 @@ import {
 } from "../services/apiUserList";
 import AddToList from "../components/AddToList";
 import { useSession } from "../contexts/SessionContext";
+import Empty from "../ui/Empty";
 
 export default function MoviePage() {
   const { movieid } = useParams();
@@ -27,8 +28,12 @@ export default function MoviePage() {
   return (
     <div className="bg-base-100 flex flex-col items-center justify-center gap-3 pt-5">
       {isLoading && <FullscreenSpinner />}
-      {!isLoading && !data && <p>No data</p>}
-      {!isLoading && error && <p>Error while getting the title</p>}
+      {!isLoading && !data && !error && (
+        <Empty emptyTitle={"Oops!"} emptyText="No data" />
+      )}
+      {!isLoading && error && (
+        <Empty emptyTitle={"Oops!"} emptyText="Error while getting the title" />
+      )}
       {data && (
         <div className="flex max-w-3xl flex-col items-center gap-5">
           <div className="w-full max-w-3xl">
