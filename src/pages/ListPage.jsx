@@ -9,12 +9,14 @@ import SendItem from "../components/SendItem";
 import DeleteItemFromList from "../components/DeleteItemFromList";
 import { useSession } from "../contexts/SessionContext";
 import useItemDetails from "../features/tmdb/useItemDetails";
+import Empty from "../ui/Empty";
 
 export default function ListPage() {
   const { listid } = useParams();
   const { isLoading, list } = useListItems({ list_id: listid });
   if (isLoading) return <FullscreenSpinner />;
-  if (!list?.items?.length) return <div>Empty List</div>;
+  if (!list?.items?.length)
+    return <Empty emptyText="(Empty List)" emptyTitle={list?.list_name} />;
   return (
     <div className="p-5" key={listid}>
       <MovieList list={list} />
